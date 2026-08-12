@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HEKAND Auto Division</title>
+<style>
+:root{
+  --red:#d71920; --red2:#ff2b35; --silver:#c8ccd2; --dark:#090a0c;
+  --panel:#111317; --panel2:#181b20; --line:#2c3037; --muted:#9ca3af;
+  --green:#2ecc71; --amber:#f5b942; --blue:#3da9fc;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:
+radial-gradient(circle at 20% 0%,rgba(215,25,32,.13),transparent 30%),
+linear-gradient(135deg,#070809,#111317 55%,#090a0c);color:#f4f5f7;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:url("assets/hekand-logo.png") center 25%/620px auto no-repeat;
+opacity:.025;pointer-events:none;z-index:-1}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:430px;background:rgba(17,19,23,.94);border:1px solid #34383f;border-radius:18px;padding:34px;box-shadow:0 25px 80px #000}
+.login-logo{width:260px;display:block;margin:0 auto 25px}
+h1,h2,h3{margin:0 0 14px}.muted{color:var(--muted)}
+label{display:block;font-size:13px;color:#cfd3d8;margin:12px 0 6px}
+input,select,textarea{width:100%;background:#0c0e11;border:1px solid #363b43;color:white;border-radius:8px;padding:11px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+.btn{border:0;border-radius:8px;padding:10px 15px;background:#292e35;color:#fff}.btn:hover{filter:brightness(1.15)}
+.btn-red{background:linear-gradient(135deg,var(--red),#9d0d13);font-weight:700}.btn-green{background:#167a43}.btn-blue{background:#176da4}.security-actions{display:flex;gap:8px;flex-wrap:wrap}.security-note{padding:10px;border:1px solid #343a43;border-radius:8px;background:#0d1014;margin:10px 0}.password-strength{font-size:12px;margin-top:5px}.danger-note{color:#ff9b9b}
+.small{font-size:12px}.login-hint{margin-top:15px;padding:10px;background:#0b0d10;border:1px solid #292d33;border-radius:8px}
+.app{display:none;min-height:100vh}.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:rgba(8,9,11,.97);border-right:1px solid #2c3036;padding:18px 14px;z-index:5}
+.brand img{width:205px;display:block;margin:5px auto 20px}.userbox{background:#111419;border:1px solid #292e35;border-radius:10px;padding:12px;margin-bottom:16px}
+.nav button{width:100%;text-align:left;background:transparent;border:0;color:#d9dce0;padding:12px;border-radius:8px;margin:2px 0}.nav button.active,.nav button:hover{background:#211416;color:white;border-left:3px solid var(--red)}
+.nav .owner{display:none}.logout{position:absolute;bottom:18px;left:14px;right:14px}
+.main{margin-left:255px;padding:24px;min-height:100vh}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.page-title{font-size:25px;font-weight:700}.top-actions{display:flex;gap:8px}
+.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:rgba(17,19,23,.93);border:1px solid #2b3037;border-radius:12px;padding:18px}.metric{font-size:28px;font-weight:800;margin-top:8px}.metric.red{color:#ff5961}.metric.blue{color:#64b9ef}.metric.green{color:#50d890}.metric.amber{color:#f5c75c}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}.panel{background:rgba(17,19,23,.93);border:1px solid #2b3037;border-radius:12px;padding:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;border-bottom:1px solid #292d33;text-align:left;vertical-align:top}th{color:#b9bec6;font-weight:600}.badge{display:inline-block;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700}.badge.green{background:#123d27;color:#62df98}.badge.amber{background:#473714;color:#f4c95d}.badge.red{background:#4b1619;color:#ff747b}.badge.blue{background:#11344b;color:#69b9ee}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.part-row{grid-template-columns:1.2fr 1fr .45fr 1fr!important}.full{grid-column:1/-1}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.section-note{background:#0c0f12;border:1px dashed #3a3f46;padding:12px;border-radius:8px;margin-bottom:14px}
+.statline{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #292d33}
+.search{max-width:300px}
+.toast{position:fixed;right:25px;bottom:25px;background:#1c2026;border:1px solid #444a52;padding:13px 16px;border-radius:9px;box-shadow:0 12px 35px #000;display:none;z-index:20}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px;z-index:15}.modal.show{display:flex}.modal-box{width:min(820px,100%);max-height:94vh;overflow:auto;background:#12151a;border:1px solid #383d45;border-radius:14px;padding:20px}
+.print-area{background:white;color:#111;padding:28px;border-radius:8px}.print-area table{color:#111}.print-area th,.print-area td{border-color:#ccc}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* ===== OWNER BENEFIT & PROFIT ===== */
+.benefit-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.benefit-card{background:linear-gradient(145deg,#15181d,#0f1114);border:1px solid #30353d;border-radius:12px;padding:16px}
+.benefit-card .k-label{font-size:12px;color:#9ca3af}.benefit-card .k-value{font-size:24px;font-weight:800;margin-top:7px}
+.benefit-card.redline{border-top:3px solid var(--red)}.benefit-card.greenline{border-top:3px solid var(--green)}.benefit-card.blueline{border-top:3px solid var(--blue)}.benefit-card.amberline{border-top:3px solid var(--amber)}
+.profit-chart{display:grid;gap:12px;margin-top:10px}.chart-row{display:grid;grid-template-columns:170px 1fr 150px;align-items:center;gap:10px}.chart-label{font-size:12px;color:#d5d8dc}.chart-track{height:20px;background:#0b0d10;border:1px solid #292e35;border-radius:99px;overflow:hidden}.chart-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--red),#ff5961)}.chart-bar.service{background:linear-gradient(90deg,var(--blue),#69b9ee)}.chart-bar.total{background:linear-gradient(90deg,var(--green),#62df98)}.chart-value{text-align:right;font-weight:700;font-size:12px}
+.share-table input{max-width:110px}.share-total{font-weight:800}.share-total.invalid{color:#ff747b}.share-total.valid{color:#62df98}
+.slip-actions{display:flex;gap:6px;flex-wrap:wrap}
+.share-history{margin-top:14px}.share-history table{width:100%;border-collapse:collapse}.share-history th,.share-history td{padding:9px;border-bottom:1px solid #30353d}.share-history th{background:#202328}.report-actions{display:flex;gap:8px;flex-wrap:wrap}
+.print-area.benefit-report{width:190mm;min-height:277mm;padding:12mm;background:#fff;color:#111}.benefit-report .report-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:4px solid #c8101e;padding-bottom:6mm;margin-bottom:6mm}.benefit-report .report-logo{width:48mm}.benefit-report h1{font-size:20pt;margin:0;color:#151515}.benefit-report .sub{font-size:8pt;color:#777;margin-top:2mm}.benefit-report .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-bottom:5mm}.benefit-report .report-card{border:1px solid #ddd;padding:4mm}.benefit-report .report-card .label{font-size:7pt;color:#777;text-transform:uppercase;font-weight:700}.benefit-report .report-card .value{font-size:13pt;font-weight:900;margin-top:1mm}.benefit-report table{width:100%;border-collapse:collapse;margin-top:4mm}.benefit-report th{background:#202328;color:#fff;text-align:left}.benefit-report th,.benefit-report td{border:1px solid #ddd;padding:2.5mm;font-size:8pt}.benefit-report .num{text-align:right}.benefit-report .grand{font-weight:900;font-size:10pt}.benefit-report .footer{margin-top:8mm;border-top:1px solid #ddd;padding-top:3mm;font-size:7pt;color:#777;text-align:center}
+@media(max-width:1000px){.benefit-kpis{grid-template-columns:repeat(2,1fr)}.chart-row{grid-template-columns:120px 1fr 125px}}
+@media(max-width:700px){.benefit-kpis{grid-template-columns:1fr}.chart-row{grid-template-columns:1fr}.chart-value{text-align:left}}
+.empty{padding:30px;text-align:center;color:#777}
+@media(max-width:900px){.sidebar{width:210px}.main{margin-left:210px}.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:650px){.sidebar{position:relative;width:100%;height:auto}.logout{position:static;margin-top:12px}.main{margin-left:0;padding:14px}.cards,.formgrid,.kpi-row{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.topbar{align-items:flex-start;gap:10px;flex-direction:column}}
+
+
+/* ===== A5 SALES / NOTA PENJUALAN ===== */
+.print-area.payroll-slip .total-box{margin-top:5mm;width:100%}
+.print-area.payroll-slip .total-row.grand{font-size:12pt;padding:3mm 0}
+.print-area.sales-print{
+  width:148mm;min-height:210mm;box-sizing:border-box;margin:0 auto;padding:9mm;
+  background:#fff;color:#171717;font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;line-height:1.35;
+}
+.sales-print .sale-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #c8101e;padding-bottom:5mm;margin-bottom:5mm}
+.sales-print .sale-logo{width:48mm;height:auto;object-fit:contain}
+.sales-print .sale-title{text-align:right}
+.sales-print .sale-title .brandline{font-size:7.5pt;letter-spacing:1.4px;color:#777;text-transform:uppercase}
+.sales-print .sale-title h1{font-size:18pt;letter-spacing:1px;margin:1mm 0;color:#151515}
+.sales-print .sale-title .sale-no{font-size:9pt;color:#777}
+.sales-print .sale-info{display:grid;grid-template-columns:1fr 1fr;border:1px solid #d2d2d2;margin-bottom:5mm}
+.sales-print .sale-info .cell{padding:3mm;border-bottom:1px solid #ddd}
+.sales-print .sale-info .cell:nth-child(odd){border-right:1px solid #ddd}
+.sales-print .sale-info .label{font-size:7pt;text-transform:uppercase;letter-spacing:.5px;color:#777;font-weight:700}
+.sales-print .sale-info .value{font-size:10pt;font-weight:700;margin-top:1mm}
+.sales-print .sale-section{font-weight:800;text-transform:uppercase;font-size:8pt;letter-spacing:.8px;color:#c8101e;border-bottom:1px solid #ddd;padding-bottom:1.5mm;margin:5mm 0 2mm}
+.sales-print table{width:100%;border-collapse:collapse}
+.sales-print th{background:#202328;color:#fff;border:1px solid #202328;padding:2.2mm 2mm;font-size:7.5pt;text-transform:uppercase}
+.sales-print td{border:1px solid #d5d5d5;padding:2.4mm 2mm;font-size:8.5pt}
+.sales-print .num{text-align:right}
+.sales-print .grand-box{margin:5mm 0 0 auto;width:75mm;border-top:2px solid #222}
+.sales-print .grand-row{display:flex;justify-content:space-between;padding:2mm 0;border-bottom:1px solid #ddd}
+.sales-print .grand-row.total{font-size:12pt;font-weight:900;border-bottom:3px solid #c8101e;padding:3mm 0}
+.sales-print .grand-row.total span:last-child{color:#c8101e}
+.sales-print .thanks{text-align:center;margin-top:8mm;font-size:8.5pt;color:#555}
+.sales-print .sale-sign{display:grid;grid-template-columns:1fr 1fr;gap:15mm;margin-top:12mm;text-align:center}
+.sales-print .sign-space{height:16mm}
+.sales-print .sign-line{border-top:1px solid #444;padding-top:1.5mm;font-size:7.5pt;font-weight:700}
+.sales-print .sale-footer{margin-top:7mm;border-top:1px solid #ddd;padding-top:2.5mm;color:#777;font-size:6.8pt;text-align:center}
+
+/* ===== A5 PROFESSIONAL WORK ORDER ===== */
+.print-area{
+  width:148mm;
+  min-height:210mm;
+  box-sizing:border-box;
+  margin:0 auto;
+  padding:9mm 9mm 8mm;
+  background:#fff;
+  color:#171717;
+  font-family:Arial,Helvetica,sans-serif;
+  border-radius:0;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+  font-size:9.2pt;
+  line-height:1.35;
+}
+.print-area .wo-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #c8101e;padding-bottom:5mm;margin-bottom:4mm}
+.print-area .wo-logo{width:48mm;height:auto;object-fit:contain}
+.print-area .wo-title{text-align:right}
+.print-area .wo-title .smallcaps{font-size:7.5pt;letter-spacing:1.5px;color:#777;text-transform:uppercase}
+.print-area .wo-title h1{font-size:19pt;letter-spacing:1px;margin:1mm 0;color:#151515}
+.print-area .wo-title .wo-no{font-size:11pt;font-weight:800;color:#c8101e}
+.print-area .info-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cfcfcf;margin-bottom:4mm}
+.print-area .info-cell{padding:2.2mm 2.5mm;border-bottom:1px solid #ddd}
+.print-area .info-cell:nth-child(odd){border-right:1px solid #ddd}
+.print-area .info-cell:nth-last-child(-n+2){border-bottom:0}
+.print-area .label{font-size:7pt;text-transform:uppercase;letter-spacing:.5px;color:#777;font-weight:700}
+.print-area .value{font-size:9pt;font-weight:600;margin-top:.6mm}
+.print-area .section-title{display:flex;align-items:center;gap:2mm;font-weight:800;text-transform:uppercase;font-size:8pt;letter-spacing:.8px;color:#c8101e;border-bottom:1px solid #ddd;padding-bottom:1.5mm;margin:3.5mm 0 2mm}
+.print-area .section-title:before{content:"";width:3mm;height:3mm;background:#c8101e;display:inline-block}
+.print-area .desc{border:1px solid #ddd;background:#fafafa;padding:2.5mm;min-height:10mm;white-space:pre-wrap}
+.print-area table.wo-table{width:100%;border-collapse:collapse;margin:0}
+.print-area .wo-table th{background:#202328;color:#fff;border:1px solid #202328;padding:1.8mm 1.6mm;font-size:7.2pt;text-transform:uppercase}
+.print-area .wo-table td{border:1px solid #d5d5d5;padding:1.8mm 1.6mm;font-size:7.8pt}
+.print-area .wo-table td.num,.print-area .wo-table th.num{text-align:right}
+.print-area .total-box{margin-top:3mm;margin-left:auto;width:68mm;border-top:2px solid #222}
+.print-area .total-row{display:flex;justify-content:space-between;padding:1.4mm 0;border-bottom:1px solid #ddd}
+.print-area .total-row.grand{font-size:11pt;font-weight:900;border-bottom:3px solid #c8101e;padding:2mm 0;color:#111}
+.print-area .total-row.grand span:last-child{color:#c8101e}
+.print-area .footer-note{margin-top:5mm;border-top:1px solid #ddd;padding-top:2.5mm;color:#666;font-size:6.8pt;display:flex;justify-content:space-between;gap:4mm}
+.print-area .signatures{display:grid;grid-template-columns:1fr 1fr;gap:15mm;margin-top:8mm;text-align:center}
+.print-area .sig-space{height:14mm}
+.print-area .sig-line{border-top:1px solid #444;padding-top:1.5mm;font-size:7.5pt;font-weight:700}
+@media screen and (max-width:900px){
+  .print-area{transform-origin:top center}
+}
+
+@media print{ @page{size:A5 portrait;margin:0} html,body{width:148mm;min-height:210mm;background:#fff!important;margin:0!important;padding:0!important} body{overflow:visible}.sidebar,.topbar,.no-print,.modal> .actions{display:none!important}.main{margin:0!important;padding:0!important}.page{display:none!important}.page.printing{display:block!important}.modal{position:static!important;display:block!important;background:#fff!important;padding:0!important}.modal-box{width:148mm!important;max-height:none!important;overflow:visible!important;background:#fff!important;border:0!important;border-radius:0!important;padding:0!important}.print-area{width:148mm!important;min-height:210mm!important;margin:0!important;box-shadow:none!important;border-radius:0!important;page-break-after:auto!important} }
+
+.asset-summary{display:flex;justify-content:space-between;gap:15px;padding:12px 14px;border-top:1px solid #e4e4e4;background:#fafafa}.asset-summary b{font-size:16px}.asset-summary.highlight{margin-top:6px;border:2px solid #c8101e;background:#fff7f7}.asset-summary.negative{border-color:#8b0000;background:#ffecec;color:#8b0000}
+@media print{.print-area.benefit-report{width:210mm!important;min-height:297mm!important;padding:12mm!important}}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="login-card">
+    <img src="assets/hekand-logo.png" class="login-logo">
+    <h2 style="text-align:center">Auto Division Management</h2>
+    <p class="muted" style="text-align:center">Workshop • Body Repair • Painting • Detailing</p>
+    <label>Username</label><input id="loginUser" placeholder="owner / admin">
+    <label>Password</label><input id="loginPass" type="password" placeholder="••••••••">
+    <button class="btn btn-red" style="width:100%;margin-top:16px" onclick="login()">LOGIN</button>
+    <div class="login-hint small">Akun awal: <b>owner / owner123</b> dan <b>admin / admin123</b>. Setelah login, segera ganti password melalui <b>Keamanan Akun</b>.</div>
+  </div>
+</div>
+
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="brand"><img src="assets/hekand-logo.png"></div>
+    <div class="userbox"><div id="userName"></div><div class="small muted" id="userRole"></div></div>
+    <div class="nav">
+      <button data-page="dashboard" class="active">▦ Dashboard</button>
+      <button data-page="workorders">▤ Pekerjaan / Work Order</button>
+      <button data-page="sales">▤ Penjualan Barang</button>
+      <button data-page="inventory">▣ Barang & Stock</button>
+      <button data-page="expenses">▤ Pengeluaran</button>
+      <button data-page="benefit" class="owner">◆ Benefit & Pembagian Hasil</button>
+      <button data-page="payroll" class="owner">◈ Payroll Karyawan</button>
+    </div>
+    <button class="btn logout" onclick="logout()">⎋ Logout</button>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div><div class="page-title" id="pageTitle">Dashboard</div><div class="small muted">HEKAND Auto Division • Management System</div></div>
+      <div class="top-actions"><button class="btn" onclick="openSecurity()">🔐 Keamanan Akun</button><button class="btn" onclick="exportData()">Export Data</button><button class="btn btn-red" onclick="backup()">Backup</button></div>
+    </div>
+
+    <section id="dashboard" class="page active">
+      <div class="cards">
+        <div class="card"><div class="muted">Total Mobil Painting</div><div class="metric red" id="mPainting">0</div><div class="small muted">Average Duration</div><div id="aPainting" class="small">0 hari</div></div>
+        <div class="card"><div class="muted">Total Body Repair</div><div class="metric blue" id="mBody">0</div><div class="small muted">Average Duration</div><div id="aBody" class="small">0 hari</div></div>
+        <div class="card"><div class="muted">Total Detailing</div><div class="metric green" id="mDetail">0</div><div class="small muted">Average Duration</div><div id="aDetail" class="small">0 hari</div></div>
+        <div class="card"><div class="muted">Total Work Order</div><div class="metric amber" id="mWO">0</div><div class="small muted">All pekerjaan</div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="panel-head"><h3>Task Highlight</h3><button class="btn btn-red small" onclick="showPage('workorders')">+ Work Order</button></div><div id="taskHighlight"></div></div>
+        <div class="panel"><div class="panel-head"><h3>Top 6 Aging Barang</h3></div><div id="aging"></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="panel-head"><h3>Penjualan Part per Pekerjaan / Minggu</h3></div><div id="salesChart"></div></div>
+        <div class="panel"><div class="panel-head"><h3>Stock Fast Moving</h3></div><div id="fastMoving"></div></div>
+      </div>
+    </section>
+
+    <section id="workorders" class="page">
+      <div class="panel">
+        <div class="panel-head"><h3>Pekerjaan / Work Order</h3><button class="btn" onclick="resetWO()">Reset</button></div>
+        <div class="section-note small">
+Kode WO otomatis dan <b>berurutan</b> berdasarkan kategori:
+<b>RP12100001 → RP12100002 → RP12100003</b> untuk Body Repair,
+<b>PT12100001 → PT12100002</b> untuk Painting, dan
+<b>DT12100001 → DT12100002</b> untuk Detailing.
+Nomor yang sudah tersimpan tidak akan dipakai kembali.
+</div>
+        <form id="woForm">
+          <div class="formgrid">
+            <div><label>Kategori</label><select id="woCat" onchange="updateCode()"><option value="RP">Body Repair (RP)</option><option value="PT">Painting (PT)</option><option value="DT">Detailing (DT)</option></select></div>
+            <div><label>Work Order Code</label><input id="woCode" readonly></div>
+            <div><div><label>Tanggal & Jam Masuk</label><input id="woIn" type="datetime-local"></div></div>
+            <div><label>Tanggal & Jam Keluar</label><input id="woOut" type="datetime-local"></div>
+            <div><label>Nama Customer</label><input id="woCustomer" required></div>
+            <div><label>Plat Number</label><input id="woPlate" required></div>
+            <div><label>Jenis Kendaraan</label><input id="woVehicle" placeholder="MPV / SUV / LCGC / Truck"></div>
+            <div><label>Status</label><select id="woStatus"><option>Open</option><option>Progress</option><option>Waiting Part</option><option>Completed</option><option>Cancelled</option></select></div>
+            <div class="full"><label>Keluhan</label><textarea id="woComplaint" rows="2"></textarea></div>
+            <div><label>Teknisi</label><input id="woTech" placeholder="Nama teknisi"></div>
+            <div><label>Harga Jasa Total</label><input id="woService" type="number" min="0" value="0" oninput="calcWOPayment()"></div>
+            <div><label>Total Harga Part</label><input id="woPartTotal" type="number" value="0" readonly></div>
+            <div><label>Total Pembayaran</label><input id="woTotalPayment" type="number" value="0" readonly style="font-weight:700;border-color:#d71920"></div>
+            <div class="full"><label>Detail Pekerjaan</label><textarea id="woWork" rows="3" placeholder="Pekerjaan dari teknisi"></textarea></div>
+            <div class="full">
+  <label>Part yang Diambil</label>
+  <div id="woPartsRows"></div>
+  <button type="button" class="btn small" onclick="addPartRow()">+ Tambah Part</button>
+  <input type="hidden" id="woParts">
+  <div class="small muted" style="margin-top:6px">Setiap part memiliki Nama Part, Code Part, Qty dan Harga Jual.</div>
+</div>
+          </div>
+          <div class="actions"><button type="button" class="btn" onclick="printDraft()">Print Preview</button><button type="submit" class="btn btn-red">Simpan Work Order</button></div>
+        </form>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="panel-head"><h3>Daftar Work Order</h3><input class="search" id="woSearch" placeholder="Cari code / customer / plat..." oninput="renderWO()"></div><div id="woTable"></div></div>
+    </section>
+
+
+    <section id="sales" class="page">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Penjualan Barang</h3>
+          <span class="badge green">Tanggal & Jam Otomatis</span>
+        </div>
+        <div class="section-note small">
+          Transaksi penjualan otomatis mencatat tanggal & jam saat disimpan.
+          Code Barang dapat dipilih dari stock yang sudah diinput.
+        </div>
+        <form id="salesForm">
+          <div class="formgrid">
+            <div>
+              <label>Tanggal & Jam</label>
+              <input id="salesDate" readonly>
+            </div>
+            <div>
+              <label>Code Barang</label>
+              <select id="salesCode" required onchange="fillSalesItem()">
+                <option value="">-- Pilih Barang --</option>
+              </select>
+            </div>
+            <div>
+              <label>Nama Barang</label>
+              <input id="salesName" readonly>
+            </div>
+            <div>
+              <label>Jumlah</label>
+              <input id="salesQty" type="number" min="1" value="1" required>
+            </div>
+            <div>
+              <label>Harga Jual / pcs</label>
+              <input id="salesPrice" type="number" min="0" required>
+            </div>
+            <div>
+              <label>Total Penjualan</label>
+              <input id="salesTotal" type="number" readonly>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" onclick="resetSales()">Reset</button>
+            <button type="submit" class="btn btn-red">Simpan Penjualan</button>
+          </div>
+        </form>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head">
+          <h3>Riwayat Penjualan Barang</h3>
+          <input class="search" id="salesSearch" placeholder="Cari code / nama barang..." oninput="renderSales()">
+        </div>
+        <div id="salesTable"></div>
+      </div>
+    </section>
+
+    <section id="inventory" class="page">
+      <div class="panel">
+        <div class="panel-head"><h3>Input Barang Masuk & Code Barang</h3></div>
+        <form id="invForm"><div class="formgrid">
+          <div><label>Nama Barang</label><input id="invName" required></div>
+          <div><label>Code Barang</label><input id="invCode" required></div>
+          <div><label>Tanggal Masuk</label><input id="invDate" type="date" required></div>
+          <div><label>Jumlah Stock Barang</label><input id="invStock" type="number" min="0" required></div>
+          <div><label>Harga Beli</label><input id="invBuy" type="number" min="0" required></div>
+          <div><label>Harga Jual</label><input id="invSell" type="number" min="0" required></div>
+        </div><div class="actions"><button class="btn btn-red">Simpan Barang</button></div></form>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="panel-head"><h3>Stock Barang</h3><input class="search" id="invSearch" placeholder="Cari barang / code..." oninput="renderInventory()"></div><div id="invTable"></div></div>
+    </section>
+
+
+    <section id="expenses" class="page">
+      <div class="panel">
+        <div class="panel-head"><h3>Pengeluaran Operasional</h3><span class="badge blue">Owner & Admin</span></div>
+        <div class="section-note small">Setiap pengeluaran akan otomatis mengurangi <b>Omzet / Asset</b> pada periode yang dipilih di menu Benefit & Pembagian Hasil.</div>
+        <form id="expenseForm"><div class="formgrid">
+          <div><label>Tanggal</label><input id="expDate" type="date" required></div>
+          <div><label>Jenis Pengeluaran</label><select id="expCategory" required><option value="Makan">Makan</option><option value="Snack">Snack</option><option value="Air">Air</option><option value="Listrik">Listrik</option><option value="Additional">Additional</option></select></div>
+          <div id="expDescWrap" style="display:none"><label>Description Additional</label><input id="expDescription" placeholder="Contoh: Pembelian alat kebersihan"></div>
+          <div><label>Harga / Nilai Pengeluaran</label><input id="expAmount" type="number" min="0" required></div>
+        </div><div class="actions"><button class="btn btn-red">Simpan Pengeluaran</button></div></form>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="panel-head"><h3>Riwayat Pengeluaran</h3><span class="small muted" id="expenseTotalLabel"></span></div><div id="expenseTable"></div></div>
+    </section>
+
+    <section id="benefit" class="page">
+      <div class="panel">
+        <div class="panel-head"><h3>Benefit & Pembagian Hasil</h3><span class="badge red">Owner Only</span></div>
+        <div class="section-note small">
+          Periode laporan dapat dipilih. <b>Keuntungan Penjualan Part</b> = (Part Jual − Part Beli) × Qty Terjual.
+          <b>Total Omzet Bersih</b> dihitung dari Profit Part + Jasa, kemudian dikurangi Pengeluaran, Payroll, Barang & Stock yang masuk pada periode tersebut, serta Pembagian Hasil.
+        </div>
+        <div class="formgrid">
+          <div><label>Tanggal Mulai</label><input id="benefitStart" type="date" onchange="renderBenefit()"></div>
+          <div><label>Tanggal Selesai</label><input id="benefitEnd" type="date" onchange="renderBenefit()"></div>
+        </div>
+      </div>
+
+      <div class="benefit-kpis" style="margin-top:14px">
+        <div class="benefit-card redline"><div class="k-label">Keuntungan Penjualan Part</div><div class="k-value" id="benefitPartProfit">Rp 0</div></div>
+        <div class="benefit-card blueline"><div class="k-label">Total Keseluruhan Jasa</div><div class="k-value" id="benefitService">Rp 0</div></div>
+        <div class="benefit-card amberline"><div class="k-label">Total Pengeluaran</div><div class="k-value" id="benefitExpenses">Rp 0</div></div>
+        <div class="benefit-card redline"><div class="k-label">Payroll</div><div class="k-value" id="benefitPayroll">Rp 0</div></div>
+        <div class="benefit-card amberline"><div class="k-label">Barang & Stock Masuk</div><div class="k-value" id="benefitStock">Rp 0</div></div>
+        <div class="benefit-card greenline"><div class="k-label">Total Omzet Bersih</div><div class="k-value" id="benefitNet">Rp 0</div></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head"><h3>Pembagian Hasil</h3><span class="small muted">Nominal manual per periode</span></div>
+        <div class="section-note small">
+          Pembagian hasil tidak memakai persentase. Isi nominal yang benar-benar diambil pada periode tersebut.
+          Nilai ini akan langsung mengurangi <b>Total Omzet Bersih</b>.
+        </div>
+        <div id="shareTable"></div>
+        <div class="actions"><button class="btn btn-red" onclick="saveShares()">Simpan Pembagian Hasil</button></div>
+        <div class="asset-summary"><span>Total Profit Part + Jasa</span><b id="shareGross">Rp 0</b></div>
+        <div class="asset-summary"><span>Total Pengeluaran + Payroll + Stock</span><b id="shareExpenses">Rp 0</b></div>
+        <div class="asset-summary"><span>Total Pembagian Hasil</span><b id="shareTaken">Rp 0</b></div>
+        <div class="asset-summary highlight"><span>Total Omzet Bersih / Asset Masih Ada</span><b id="shareAsset">Rp 0</b></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head"><h3>Grafik</h3><span class="small muted" id="benefitPeriodLabel"></span></div>
+        <div id="benefitChart" class="profit-chart"></div>
+      </div>
+
+      <div class="panel share-history">
+        <div class="panel-head"><h3>History Pembagian Hasil</h3><span class="small muted">Tersimpan berdasarkan periode</span></div>
+        <div id="shareHistoryTable"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-head"><h3>Laporan Benefit</h3><span class="small muted">Untuk Owner, Investor & pihak terkait</span></div>
+        <div class="report-actions">
+          <button class="btn btn-red" onclick="exportBenefitPDF()">Export PDF Laporan Benefit</button>
+          <button class="btn" onclick="printBenefitReport()">Preview / Print</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="payroll" class="page">
+      <div class="panel">
+        <div class="panel-head"><h3>Penggajian Karyawan</h3><span class="badge red">Owner Only</span></div>
+        <div class="section-note small">Menu ini hanya tersedia untuk akun Owner. Persentase dan bonus dapat disimpan sebagai nilai payroll bulanan.</div>
+        <form id="payForm"><div class="formgrid">
+          <div><label>ID Karyawan</label><input id="payEmployeeId" required placeholder="Contoh: HKD-001"></div>
+          <div><label>Nama Karyawan</label><input id="payName" required></div>
+          <div><label>Posisi / Jabatan</label><input id="payPosition" required placeholder="Contoh: Mekanik / Admin"></div>
+          <div><label>Periode</label><input id="payPeriod" type="month" required></div>
+          <div><label>Total Pekerjaan / Jasa</label><input id="payJob" type="number" min="0" value="0" oninput="calcPayroll()"></div>
+          <div><label>Gaji Pokok</label><input id="payBase" type="number" min="0" value="0" oninput="calcPayroll()"></div>
+          <div><label>Persentase (%)</label><input id="payPercent" type="number" min="0" step="0.01" value="0" oninput="calcPayroll()"></div>
+          <div><label>Hasil Persentase</label><input id="payPercentResult" type="number" readonly></div>
+          <div><label>Bonus</label><input id="payBonus" type="number" min="0" value="0" oninput="calcPayroll()"></div>
+          <div><label>Total Penghasilan</label><input id="payTotal" type="number" readonly></div>
+        </div><div class="actions"><button class="btn btn-red">Simpan Payroll</button></div></form>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="panel-head"><h3>Riwayat Payroll</h3></div><div id="payTable"></div></div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+
+<div id="securityModal" class="modal">
+  <div class="modal-box" style="max-width:620px">
+    <div class="actions no-print"><button class="btn" onclick="closeSecurity()">Tutup</button></div>
+    <h2>🔐 Keamanan Akun</h2>
+    <div class="security-note small">Ganti password secara berkala. Password disimpan sebagai hash SHA-256 di browser, bukan sebagai teks biasa.</div>
+    <h3>Ganti Password Saya</h3>
+    <div class="grid2">
+      <div><label>Password Saat Ini</label><input id="secCurrent" type="password" autocomplete="current-password"></div>
+      <div><label>Password Baru</label><input id="secNew" type="password" autocomplete="new-password" oninput="passwordStrength()"></div>
+      <div><label>Konfirmasi Password Baru</label><input id="secConfirm" type="password" autocomplete="new-password"></div>
+      <div><label>&nbsp;</label><div id="secStrength" class="password-strength muted">Minimal 8 karakter.</div></div>
+    </div>
+    <div class="actions"><button class="btn btn-red" onclick="changeMyPassword()">Simpan Password Baru</button></div>
+    <div id="ownerResetBox" style="display:none;border-top:1px solid #343a43;margin-top:18px;padding-top:18px">
+      <h3>Reset Password User</h3>
+      <div class="security-note small danger-note">Fitur reset user hanya tersedia untuk Owner. Gunakan untuk membantu Admin yang lupa password.</div>
+      <div class="grid2">
+        <div><label>User</label><select id="resetUser"><option value="admin">Admin</option></select></div>
+        <div><label>Password Baru</label><input id="resetNew" type="password" autocomplete="new-password"></div>
+      </div>
+      <div class="actions"><button class="btn btn-blue" onclick="resetUserPassword()">Reset Password User</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="printModal" class="modal">
+  <div class="modal-box">
+    <div class="actions no-print"><button class="btn" onclick="closePrint()">Tutup</button><button class="btn btn-red" onclick="window.print()">Print</button></div>
+    <div id="printContent" class="print-area"></div>
+  </div>
+</div>
+
+<script>
+const KEY='hekand_app_v1';
+const API_BASE=(window.HEKAND_API_BASE||'');
+let apiToken=sessionStorage.getItem('hekand_api_token')||'';
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||{
+  wos:[], inventory:[], sales:[], payroll:[], expenses:[], seq:{RP:1,PT:1,DT:1}, currentUser:null, users:{}
+};
+if(!state.users||typeof state.users!=='object')state.users={};
+async function hashPassword(value){
+  const data=new TextEncoder().encode(value);
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function ensureUsers(){
+  if(!state.users.owner || !state.users.admin){
+    state.users={
+      owner:{username:'owner',role:'owner',passwordHash:await hashPassword('owner123')},
+      admin:{username:'admin',role:'admin',passwordHash:await hashPassword('admin123')}
+    };
+    save();
+  }
+}
+
+if(!Array.isArray(state.expenses))state.expenses=[];
+if(!state.shareAllocations||typeof state.shareAllocations!=='object')state.shareAllocations={};
+if(!Array.isArray(state.shareHistory))state.shareHistory=[];
+// Migrate legacy period allocations into editable history records.
+Object.entries(state.shareAllocations).forEach(([key,arr])=>{
+  if(!state.shareHistory.some(r=>r.key===key)){
+    const parts=key.split('__');
+    state.shareHistory.push({id:crypto.randomUUID(),key,start:parts[0],end:parts[1],allocations:(arr||[]).slice(0,4).map((x,i)=>({name:['Owner 1','Owner 2','Investor 1','Investor 2'][i],amount:+x.amount||0})),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+  }
+});
+if(!Array.isArray(state.shares)||state.shares.length!==4){
+  state.shares=[
+    {name:'Owner 1',amount:0},
+    {name:'Owner 2',amount:0},
+    {name:'Investor 1',amount:0},
+    {name:'Investor 2',amount:0}
+  ];
+} else {
+  state.shares=state.shares.slice(0,4).map((x,i)=>({name:['Owner 1','Owner 2','Investor 1','Investor 2'][i],amount:+x.amount||0}));
+}
+const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const fmtDate=s=>s?new Date(s).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}):'-';
+let saveTimer=null;
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  clearTimeout(saveTimer);
+  if(apiToken){
+    saveTimer=setTimeout(async()=>{
+      try{
+        const r=await fetch(API_BASE+'/api/state',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiToken},body:JSON.stringify(state)});
+        if(!r.ok) console.warn('Central database sync failed',r.status);
+      }catch(e){console.warn('Central database offline; local cache retained',e)}
+    },180);
+  }
+}
+async function loadCentralState(){
+  try{
+    const r=await fetch(API_BASE+'/api/state',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const remote=await r.json();
+    if(remote&&typeof remote==='object'&&remote.state){
+      state=remote.state;
+      localStorage.setItem(KEY,JSON.stringify(state));
+    }
+  }catch(e){console.warn('Central database unavailable; using local cache',e)}
+}
+
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
+async function login(){
+ const u=document.getElementById('loginUser').value.trim().toLowerCase(), p=document.getElementById('loginPass').value;
+ if(!u||!p){toast('Username dan password wajib diisi');return}
+ await ensureUsers();
+ try{
+   const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+   if(r.ok){
+     const data=await r.json(); apiToken=data.token; sessionStorage.setItem('hekand_api_token',apiToken);
+     state=data.state||state; state.currentUser=u; save(); startApp(); return;
+   }
+ }catch(e){}
+ const account=state.users[u];
+ if(account && account.passwordHash===await hashPassword(p)){ state.currentUser=u; save(); startApp(); }
+ else toast('Username atau password salah');
+}
+function startApp(){
+ document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';
+ document.getElementById('userName').textContent=state.currentUser==='owner'?'Owner':'Admin';
+ document.getElementById('userRole').textContent=state.currentUser==='owner'?'All Access':'Access Menu 3 & 4';
+ document.querySelectorAll('.owner').forEach(x=>x.style.display=state.currentUser==='owner'?'block':'none');
+ updateCode();renderAll();
+}
+async function openSecurity(){
+ await ensureUsers();
+ document.getElementById('secCurrent').value='';document.getElementById('secNew').value='';document.getElementById('secConfirm').value='';
+ document.getElementById('resetNew').value='';
+ document.getElementById('ownerResetBox').style.display=state.currentUser==='owner'?'block':'none';
+ document.getElementById('securityModal').classList.add('show');
+}
+function closeSecurity(){document.getElementById('securityModal').classList.remove('show')}
+function passwordStrength(){
+ const p=document.getElementById('secNew').value, el=document.getElementById('secStrength');
+ if(!p){el.textContent='Minimal 8 karakter.';return}
+ let score=(p.length>=8)+(/[A-Z]/.test(p))+(/\d/.test(p))+(/[^A-Za-z0-9]/.test(p));
+ el.textContent=score>=4?'Password kuat.':score>=2?'Password cukup kuat.':'Password lemah — gunakan minimal 8 karakter, huruf besar, angka, dan simbol.';
+}
+async function changeMyPassword(){
+ const u=state.currentUser, current=document.getElementById('secCurrent').value, next=document.getElementById('secNew').value, confirmPass=document.getElementById('secConfirm').value;
+ if(!u)return;
+ if(!current||!next||!confirmPass){toast('Semua password wajib diisi');return}
+ if(next.length<8){toast('Password baru minimal 8 karakter');return}
+ if(next!==confirmPass){toast('Konfirmasi password tidak sama');return}
+ if(state.users[u].passwordHash!==await hashPassword(current)){toast('Password saat ini salah');return}
+ state.users[u].passwordHash=await hashPassword(next);save();closeSecurity();toast('Password berhasil diubah');
+}
+async function resetUserPassword(){
+ if(state.currentUser!=='owner'){toast('Reset user hanya untuk Owner');return}
+ const u=document.getElementById('resetUser').value, next=document.getElementById('resetNew').value;
+ if(!next||next.length<8){toast('Password baru minimal 8 karakter');return}
+ if(!state.users[u]){toast('User tidak ditemukan');return}
+ if(!confirm('Reset password user '+u+'?'))return;
+ state.users[u].passwordHash=await hashPassword(next);save();document.getElementById('resetNew').value='';toast('Password user berhasil di-reset');
+}
+function logout(){state.currentUser=null;save();sessionStorage.removeItem('hekand_api_token');apiToken='';location.reload()}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function showPage(id){
+ if((id==='payroll'||id==='benefit')&&state.currentUser!=='owner'){toast('Menu ini hanya untuk Owner');return}
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ document.getElementById('pageTitle').textContent={
+  dashboard:'Dashboard',
+  workorders:'Pekerjaan / Work Order',
+  sales:'Penjualan Barang',
+  inventory:'Barang & Stock',
+  expenses:'Pengeluaran',
+  benefit:'Benefit & Pembagian Hasil',
+  payroll:'Payroll Karyawan'
+}[id];
+ window.scrollTo(0,0);
+}
+function updateCode(){
+ const cat=document.getElementById('woCat').value;
+ document.getElementById('woCode').value=cat+'1210000'+String(state.seq[cat]).padStart(2,'0');
+}
+function resetWO(){
+ const f=document.getElementById('woForm'); delete f.dataset.editId;
+ f.reset();document.getElementById('woIn').value=new Date().toISOString().slice(0,16);
+ document.getElementById('woService').value=0;document.getElementById('woPartTotal').value=0;document.getElementById('woTotalPayment').value=0;document.getElementById('woPartsRows').innerHTML='';addPartRow();updateCode();
+ const btn=f.querySelector('button[type="submit"]'); if(btn)btn.textContent='Simpan Work Order';
+}
+document.getElementById('woForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const cat=woCat.value;
+ const editingId=document.getElementById('woForm').dataset.editId||'';
+ const code=woCode.value;
+ const partData=getPartsData();
+ const record={cat,code,in:woIn.value,out:woOut.value,customer:woCustomer.value,plate:woPlate.value,vehicle:woVehicle.value,status:woStatus.value,complaint:woComplaint.value,tech:woTech.value,service:+woService.value||0,partTotal:+document.getElementById('woPartTotal').value||0,totalPayment:+document.getElementById('woTotalPayment').value||0,work:woWork.value,parts:JSON.stringify(partData),date:Date.now()};
+ if(editingId){
+   const idx=state.wos.findIndex(x=>x.id===editingId);
+   if(idx>=0){state.wos[idx]={...state.wos[idx],...record};toast('Work Order berhasil di-update: '+code)}
+ }else{
+   state.wos.push({id:crypto.randomUUID(),...record});
+   state.seq[cat]++;toast('Work Order tersimpan: '+code);
+ }
+ save();delete document.getElementById('woForm').dataset.editId;resetWO();renderAll();
+});
+function renderWO(){
+ const q=(document.getElementById('woSearch')?.value||'').toLowerCase();
+ const arr=state.wos.filter(x=>(x.code+' '+x.customer+' '+x.plate+' '+x.tech).toLowerCase().includes(q)).sort((a,b)=>b.date-a.date);
+ document.getElementById('woTable').innerHTML=arr.length?`<table><thead><tr><th>Code</th><th>Customer / Plat</th><th>Kategori</th><th>Teknisi</th><th>Status</th><th>Jasa</th><th>Total Pembayaran</th><th>Aksi</th></tr></thead><tbody>${arr.map(x=>`<tr><td><b>${x.code}</b><br><span class="small muted">${fmtDate(x.in)}</span></td><td>${x.customer}<br>${x.plate} • ${x.vehicle||'-'}</td><td>${x.cat}</td><td>${x.tech||'-'}</td><td><span class="badge ${x.status==='Completed'?'green':x.status==='Waiting Part'?'amber':x.status==='Cancelled'?'red':'blue'}">${x.status}</span></td><td>${money(x.service)}</td><td><b>${money(x.totalPayment||x.service)}</b></td><td><button class="btn small" onclick="viewWO('${x.id}')">View</button>
+<button class="btn btn-blue small" onclick="editWO('${x.id}')">Edit</button>
+<button class="btn btn-red small" onclick="deleteWO('${x.id}')">Hapus</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Belum ada Work Order.</div>';
+}
+function deleteWO(id){if(confirm('Hapus Work Order ini?')){state.wos=state.wos.filter(x=>x.id!==id);save();renderAll();toast('Work Order dihapus')}}
+
+
+function calcWOPayment(){
+ const service=+document.getElementById('woService').value||0;
+ const partTotal=getPartsData().reduce((sum,p)=>sum+(p.qty*p.price),0);
+ document.getElementById('woPartTotal').value=partTotal;
+ document.getElementById('woTotalPayment').value=service+partTotal;
+}
+
+function addPartRow(data={name:'',code:'',qty:1,price:0}){
+ const wrap=document.getElementById('woPartsRows');
+ const row=document.createElement('div');
+ row.className='formgrid part-row';
+ row.style.marginBottom='8px';
+ row.innerHTML=`<div><input class="part-name" placeholder="Nama Part" value="${escapeHtml(data.name)}"></div>
+   <div><input class="part-code" placeholder="Code Part" value="${escapeHtml(data.code)}"></div>
+   <div><input class="part-qty" type="number" min="1" value="${data.qty||1}" placeholder="Qty"></div>
+   <div style="display:flex;gap:6px"><input class="part-price" type="number" min="0" value="${data.price||0}" placeholder="Harga Jual"><button type="button" class="btn btn-red small" onclick="this.closest('.part-row').remove()">×</button></div>`;
+ wrap.appendChild(row);
+ row.querySelectorAll('input').forEach(i=>i.addEventListener('input',calcWOPayment));
+ calcWOPayment();
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function getPartsData(){
+ return [...document.querySelectorAll('#woPartsRows .part-row')].map(r=>({
+   name:r.querySelector('.part-name').value.trim(),
+   code:r.querySelector('.part-code').value.trim(),
+   qty:+r.querySelector('.part-qty').value||1,
+   price:+r.querySelector('.part-price').value||0
+ })).filter(p=>p.name||p.code);
+}
+function editWO(id){
+ const x=state.wos.find(a=>a.id===id); if(!x)return;
+ showPage('workorders');
+ document.getElementById('woForm').dataset.editId=id;
+ woCat.value=x.cat;woCode.value=x.code;woIn.value=x.in||'';woOut.value=x.out||'';
+ woCustomer.value=x.customer||'';woPlate.value=x.plate||'';woVehicle.value=x.vehicle||'';
+ woStatus.value=x.status||'Open';woComplaint.value=x.complaint||'';woTech.value=x.tech||'';
+ woService.value=x.service||0;woWork.value=x.work||'';
+ document.getElementById('woPartTotal').value=x.partTotal||0;document.getElementById('woTotalPayment').value=x.totalPayment||0;
+ document.getElementById('woPartsRows').innerHTML='';
+ let p=[];try{p=Array.isArray(x.parts)?x.parts:JSON.parse(x.parts||'[]')}catch(e){}
+ if(!p.length && typeof x.parts==='string'){
+   p=x.parts.split('\\n').filter(Boolean).map(s=>{let a=s.split('|');return{name:a[0]||'',code:a[1]||'',qty:1,price:+a[2]||0}})
+ }
+ (p.length?p:[{name:'',code:'',qty:1,price:0}]).forEach(addPartRow);
+ calcWOPayment();
+ document.querySelector('#woForm button[type="submit"]').textContent='Update Work Order';
+ window.scrollTo({top:0,behavior:'smooth'});toast('Mode Edit Work Order');
+}
+
+function viewWO(id){const x=state.wos.find(a=>a.id===id);if(!x)return;showPrint(x)}
+function printDraft(){
+ const x={code:woCode.value,cat:woCat.value,in:woIn.value,out:woOut.value,customer:woCustomer.value,plate:woPlate.value,vehicle:woVehicle.value,status:woStatus.value,complaint:woComplaint.value,tech:woTech.value,service:+woService.value||0,work:woWork.value,parts:getPartsData(),partTotal:+document.getElementById('woPartTotal').value||0,totalPayment:+document.getElementById('woTotalPayment').value||0};showPrint(x)
+}
+function showPrint(x){
+ document.getElementById('printContent').className='print-area';
+ let parsedParts=[];
+ try{parsedParts=Array.isArray(x.parts)?x.parts:JSON.parse(x.parts||'[]')}catch(e){
+   parsedParts=(x.parts||'').split('\\n').filter(Boolean).map(p=>{
+     let a=p.split('|');return {name:a[0]||'',code:a[1]||'',qty:1,price:+a[2]||0}
+   })
+ }
+ const partTotal=parsedParts.reduce((s,p)=>s+(+p.qty||1)*(+p.price||0),0);
+ const service=+x.service||0;
+ const total=+x.totalPayment||partTotal+service;
+ const status=x.status||'Open';
+ const statusClass=status.toLowerCase().includes('close')?'closed':'open';
+ const parts=parsedParts.length ? parsedParts.map((p,i)=>`
+   <tr>
+     <td>${i+1}</td>
+     <td><b>${escapeHtml(p.name||'-')}</b><br><span style="color:#777">${escapeHtml(p.code||'-')}</span></td>
+     <td class="num">${p.qty||1}</td>
+     <td class="num">${money(p.price||0)}</td>
+     <td class="num"><b>${money((p.qty||1)*(p.price||0))}</b></td>
+   </tr>`).join('') :
+   `<tr><td colspan="5" style="text-align:center;color:#777;padding:5mm">Tidak ada part</td></tr>`;
+
+ document.getElementById('printContent').innerHTML=`
+ <div class="wo-head">
+   <img class="wo-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+   <div class="wo-title">
+     <div class="smallcaps">HEKAND AUTO DIVISION</div>
+     <h1>WORK ORDER</h1>
+     <div class="wo-no">${escapeHtml(x.code||'-')}</div>
+   </div>
+ </div>
+
+ <div class="info-grid">
+   <div class="info-cell"><div class="label">Customer</div><div class="value">${escapeHtml(x.customer||'-')}</div></div>
+   <div class="info-cell"><div class="label">No. Polisi</div><div class="value">${escapeHtml(x.plate||'-')}</div></div>
+   <div class="info-cell"><div class="label">Kendaraan</div><div class="value">${escapeHtml(x.vehicle||'-')}</div></div>
+   <div class="info-cell"><div class="label">Kategori</div><div class="value">${escapeHtml(x.cat||'-')}</div></div>
+   <div class="info-cell"><div class="label">Tanggal & Jam Masuk</div><div class="value">${fmtDate(x.in)}</div></div>
+   <div class="info-cell"><div class="label">Tanggal & Jam Keluar</div><div class="value">${fmtDate(x.out)}</div></div>
+   <div class="info-cell"><div class="label">Teknisi</div><div class="value">${escapeHtml(x.tech||'-')}</div></div>
+   <div class="info-cell"><div class="label">Status</div><div class="value"><span style="display:inline-block;padding:1mm 3mm;border-radius:10mm;background:${statusClass==='closed'?'#e7f6ec':'#fff1f1'};color:${statusClass==='closed'?'#16743b':'#c8101e'}">${escapeHtml(status)}</span></div></div>
+ </div>
+
+ <div class="section-title">Keluhan Customer</div>
+ <div class="desc">${escapeHtml(x.complaint||'-')}</div>
+
+ <div class="section-title">Detail Pekerjaan</div>
+ <div class="desc">${escapeHtml(x.work||'-')}</div>
+
+ <div class="section-title">Part / Material</div>
+ <table class="wo-table">
+   <thead><tr><th style="width:7mm">No</th><th>Nama Part / Code</th><th class="num" style="width:12mm">Qty</th><th class="num" style="width:28mm">Harga</th><th class="num" style="width:30mm">Total</th></tr></thead>
+   <tbody>${parts}</tbody>
+ </table>
+
+ <div class="total-box">
+   <div class="total-row"><span>Total Part</span><span>${money(partTotal)}</span></div>
+   <div class="total-row"><span>Jasa Teknisi</span><span>${money(service)}</span></div>
+   <div class="total-row grand"><span>TOTAL PEMBAYARAN</span><span>${money(total)}</span></div>
+ </div>
+
+ <div class="signatures">
+   <div><div class="sig-space"></div><div class="sig-line">TEKNISI / PIC</div></div>
+   <div><div class="sig-space"></div><div class="sig-line">CUSTOMER</div></div>
+ </div>
+
+ <div class="footer-note">
+   <span>Dokumen ini merupakan Work Order resmi HEKAND Auto Division.</span>
+   <span>${fmtDate(new Date().toISOString())}</span>
+ </div>`;
+ document.getElementById('printModal').classList.add('show');
+}
+function closePrint(){document.getElementById('printModal').classList.remove('show');document.getElementById('printContent').className='print-area'}
+
+function setSalesDate(){
+  const d=new Date();
+  document.getElementById('salesDate').value=d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});
+}
+function fillSalesItems(){
+  const s=document.getElementById('salesCode');
+  const current=s.value;
+  s.innerHTML='<option value="">-- Pilih Barang --</option>'+state.inventory.map(x=>`<option value="${x.code}">${x.code} — ${x.name} (Stock: ${x.stock})</option>`).join('');
+  if(current) s.value=current;
+}
+function fillSalesItem(){
+  const code=document.getElementById('salesCode').value;
+  const item=state.inventory.find(x=>x.code===code);
+  document.getElementById('salesName').value=item?item.name:'';
+  document.getElementById('salesPrice').value=item?item.sell:0;
+  calcSalesTotal();
+}
+function calcSalesTotal(){
+  const q=+document.getElementById('salesQty').value||0;
+  const p=+document.getElementById('salesPrice').value||0;
+  document.getElementById('salesTotal').value=q*p;
+}
+function resetSales(){
+  const f=document.getElementById('salesForm');delete f.dataset.editId;
+  f.reset();setSalesDate();fillSalesItems();calcSalesTotal();
+  const b=f.querySelector('button[type="submit"]');if(b)b.textContent='Simpan Penjualan';
+}
+document.getElementById('salesQty').addEventListener('input',calcSalesTotal);
+document.getElementById('salesPrice').addEventListener('input',calcSalesTotal);
+
+document.getElementById('salesForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const form=e.target, editId=form.dataset.editId||'';
+ const code=document.getElementById('salesCode').value, item=state.inventory.find(x=>x.code===code);
+ const qty=+document.getElementById('salesQty').value||0, price=+document.getElementById('salesPrice').value||0;
+ if(!item){toast('Pilih barang terlebih dahulu');return}
+ if(qty<=0){toast('Jumlah penjualan harus lebih dari 0');return}
+ if(item.stock<qty){toast('Stock tidak mencukupi');return}
+ const rec={date:new Date().toISOString(),code:item.code,name:item.name,qty,price,buyPrice:(state.sales||[]).find(x=>x.id===editId)?.buyPrice ?? (+item.buy||0),total:qty*price};
+ if(editId){
+   const idx=(state.sales||[]).findIndex(x=>x.id===editId);
+   if(idx>=0){state.sales[idx]={...state.sales[idx],...rec};item.stock-=qty;toast('Penjualan berhasil di-update')}
+ }else{
+   state.sales.push({id:crypto.randomUUID(),...rec});item.stock-=qty;toast('Penjualan tersimpan & stock otomatis berkurang')
+ }
+ delete form.dataset.editId;save();resetSales();renderAll();
+});
+
+function renderSales(){
+  const q=(document.getElementById('salesSearch')?.value||'').toLowerCase();
+  const arr=(state.sales||[]).filter(x=>(x.code+' '+x.name).toLowerCase().includes(q)).slice().reverse();
+  document.getElementById('salesTable').innerHTML=arr.length?`<table>
+  <thead><tr><th>Tanggal & Jam</th><th>Code Barang</th><th>Nama Barang</th><th>Qty</th><th>Harga Jual</th><th>Total</th><th>Aksi</th></tr></thead>
+  <tbody>${arr.map(x=>`<tr>
+    <td>${fmtDate(x.date)}</td><td>${x.code}</td><td>${x.name}</td><td>${x.qty}</td>
+    <td>${money(x.price)}</td><td><b>${money(x.total)}</b></td>
+    <td><button class="btn small" onclick="showSalePrint('${x.id}')">View</button>
+<button class="btn btn-blue small" onclick="editSale('${x.id}')">Edit</button>
+<button class="btn btn-red small" onclick="deleteSale('${x.id}')">Hapus</button></td>
+  </tr>`).join('')}</tbody></table>`:'<div class="empty">Belum ada transaksi penjualan barang.</div>';
+}
+
+function showSalePrint(id){
+ const x=(state.sales||[]).find(a=>a.id===id);
+ if(!x)return;
+ const qty=+x.qty||0, price=+x.price||0, total=+x.total||qty*price;
+ document.getElementById('printContent').className='print-area sales-print';
+ document.getElementById('printContent').innerHTML=`
+ <div class="sale-head">
+   <img class="sale-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+   <div class="sale-title">
+     <div class="brandline">HEKAND AUTO DIVISION</div>
+     <h1>NOTA PENJUALAN</h1>
+     <div class="sale-no">Transaksi #${escapeHtml(String(x.id||'-').slice(-8).toUpperCase())}</div>
+   </div>
+ </div>
+
+ <div class="sale-info">
+   <div class="cell"><div class="label">Tanggal & Jam</div><div class="value">${fmtDate(x.date)}</div></div>
+   <div class="cell"><div class="label">Code Barang</div><div class="value">${escapeHtml(x.code||'-')}</div></div>
+   <div class="cell"><div class="label">Nama Barang</div><div class="value">${escapeHtml(x.name||'-')}</div></div>
+   <div class="cell"><div class="label">Qty</div><div class="value">${qty}</div></div>
+ </div>
+
+ <div class="sale-section">Detail Penjualan</div>
+ <table>
+   <thead><tr><th>No</th><th>Code</th><th>Nama Barang</th><th class="num">Qty</th><th class="num">Harga / pcs</th><th class="num">Total</th></tr></thead>
+   <tbody>
+     <tr>
+       <td>1</td>
+       <td>${escapeHtml(x.code||'-')}</td>
+       <td><b>${escapeHtml(x.name||'-')}</b></td>
+       <td class="num">${qty}</td>
+       <td class="num">${money(price)}</td>
+       <td class="num"><b>${money(total)}</b></td>
+     </tr>
+   </tbody>
+ </table>
+
+ <div class="grand-box">
+   <div class="grand-row"><span>Subtotal</span><span>${money(total)}</span></div>
+   <div class="grand-row total"><span>TOTAL PEMBAYARAN</span><span>${money(total)}</span></div>
+ </div>
+
+ <div class="thanks">Terima kasih telah melakukan transaksi di HEKAND Auto Division.</div>
+
+ <div class="sale-sign">
+   <div><div class="sign-space"></div><div class="sign-line">PETUGAS / ADMIN</div></div>
+   <div><div class="sign-space"></div><div class="sign-line">CUSTOMER</div></div>
+ </div>
+
+ <div class="sale-footer">Dokumen penjualan • HEKAND Auto Division • Dicetak ${fmtDate(new Date().toISOString())}</div>`;
+ document.getElementById('printModal').classList.add('show');
+}
+function editSale(id){
+ const x=(state.sales||[]).find(a=>a.id===id);if(!x)return;
+ const item=state.inventory.find(a=>a.code===x.code);
+ if(item)item.stock+=x.qty; // return old quantity before editing
+ showPage('sales');
+ document.getElementById('salesForm').dataset.editId=id;
+ fillSalesItems();salesCode.value=x.code;fillSalesItem();salesQty.value=x.qty;salesPrice.value=x.price;calcSalesTotal();
+ document.querySelector('#salesForm button[type="submit"]').textContent='Update Penjualan';
+ window.scrollTo({top:0,behavior:'smooth'});toast('Mode Edit Penjualan');
+}
+
+function deleteSale(id){
+  const x=(state.sales||[]).find(a=>a.id===id);
+  if(!x)return;
+  if(confirm('Hapus transaksi penjualan ini? Stock akan dikembalikan.')){
+    const item=state.inventory.find(a=>a.code===x.code);
+    if(item)item.stock+=x.qty;
+    state.sales=state.sales.filter(a=>a.id!==id);
+    save();renderAll();toast('Transaksi dihapus & stock dikembalikan');
+  }
+}
+
+document.getElementById('invForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const f=e.target, editId=f.dataset.editId||'';
+ const rec={name:invName.value,code:invCode.value,date:invDate.value,stock:+invStock.value,buy:+invBuy.value,sell:+invSell.value,added:Date.now()};
+ if(editId){
+   const idx=state.inventory.findIndex(x=>x.id===editId);
+   if(idx>=0){state.inventory[idx]={...state.inventory[idx],...rec};toast('Barang berhasil di-update')}
+ }else{
+   state.inventory.push({id:crypto.randomUUID(),...rec});toast('Barang tersimpan')
+ }
+ delete f.dataset.editId;save();e.target.reset();renderAll();
+});
+function renderInventory(){
+ const q=(document.getElementById('invSearch')?.value||'').toLowerCase();
+ const arr=state.inventory.filter(x=>(x.name+' '+x.code).toLowerCase().includes(q)).sort((a,b)=>a.stock-b.stock);
+ document.getElementById('invTable').innerHTML=arr.length?`<table><thead><tr><th>Barang</th><th>Code</th><th>Tgl Masuk</th><th>Stock</th><th>Harga Beli</th><th>Harga Jual</th><th>Aksi</th></tr></thead><tbody>${arr.map(x=>`<tr><td><b>${x.name}</b></td><td>${x.code}</td><td>${x.date}</td><td><span class="badge ${x.stock<=3?'red':x.stock<=10?'amber':'green'}">${x.stock}</span></td><td>${money(x.buy)}</td><td>${money(x.sell)}</td><td><button class="btn btn-blue small" onclick="editInv('${x.id}')">Edit</button>
+<button class="btn btn-red small" onclick="deleteInv('${x.id}')">Hapus</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Belum ada barang.</div>';
+}
+
+function editInv(id){
+ const x=state.inventory.find(a=>a.id===id);if(!x)return;
+ showPage('inventory');const f=document.getElementById('invForm');f.dataset.editId=id;
+ invName.value=x.name;invCode.value=x.code;invDate.value=x.date;invStock.value=x.stock;invBuy.value=x.buy;invSell.value=x.sell;
+ f.querySelector('button[type="submit"]').textContent='Update Barang';
+ window.scrollTo({top:0,behavior:'smooth'});toast('Mode Edit Barang');
+}
+
+function deleteInv(id){if(confirm('Hapus barang?')){state.inventory=state.inventory.filter(x=>x.id!==id);save();renderAll();toast('Barang dihapus')}}
+
+function localDateInput(d){
+  const x=d instanceof Date?d:new Date(d);
+  const y=x.getFullYear(),m=String(x.getMonth()+1).padStart(2,'0'),day=String(x.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function dateInRange(value,start,end){
+  if(!value)return false;
+  const d=new Date(value);
+  if(isNaN(d))return false;
+  const a=new Date(start+'T00:00:00'),b=new Date(end+'T23:59:59');
+  return d>=a&&d<=b;
+}
+function initExpenses(){
+  const d=document.getElementById('expDate'); if(d&&!d.value)d.value=localDateInput(new Date());
+}
+function renderExpenses(){
+  if(!document.getElementById('expenseTable'))return;
+  initExpenses();
+  const total=(state.expenses||[]).reduce((a,x)=>a+(+x.amount||0),0);
+  document.getElementById('expenseTotalLabel').textContent='Total seluruh pengeluaran: '+money(total);
+  document.getElementById('expenseTable').innerHTML=state.expenses.length?`<table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Description</th><th>Nilai</th><th>Aksi</th></tr></thead><tbody>${state.expenses.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(x=>`<tr><td>${x.date||'-'}</td><td><b>${escapeHtml(x.category||'-')}</b></td><td>${escapeHtml(x.description||'-')}</td><td><b>${money(x.amount)}</b></td><td><button class="btn btn-red small" onclick="deleteExpense('${x.id}')">Hapus</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Belum ada pengeluaran.</div>';
+}
+function deleteExpense(id){if(confirm('Hapus pengeluaran ini?')){state.expenses=state.expenses.filter(x=>x.id!==id);save();renderAll();toast('Pengeluaran dihapus')}}
+document.getElementById('expCategory')?.addEventListener('change',function(){const w=document.getElementById('expDescWrap');w.style.display=this.value==='Additional'?'block':'none';document.getElementById('expDescription').required=this.value==='Additional'});
+document.getElementById('expenseForm')?.addEventListener('submit',e=>{e.preventDefault();const category=expCategory.value;state.expenses.push({id:crypto.randomUUID(),date:expDate.value,category,description:category==='Additional'?expDescription.value:'',amount:+expAmount.value||0});save();e.target.reset();expDate.value=localDateInput(new Date());expDescWrap.style.display='none';expDescription.required=false;renderAll();toast('Pengeluaran tersimpan')});
+function benefitKey(){
+  const start=document.getElementById('benefitStart')?.value||'2026-08-01';
+  const end=document.getElementById('benefitEnd')?.value||'2026-08-30';
+  return start+'__'+end;
+}
+function initBenefit(){
+  if(!document.getElementById('benefitStart'))return;
+  if(!document.getElementById('benefitStart').value)document.getElementById('benefitStart').value='2026-08-01';
+  if(!document.getElementById('benefitEnd').value)document.getElementById('benefitEnd').value='2026-08-30';
+  const key=benefitKey();
+  const names=['Owner 1','Owner 2','Investor 1','Investor 2'];
+  let rec=state.shareHistory.find(r=>r.key===key);
+  if(rec){
+    state.shareAllocations[key]=rec.allocations.map((x,i)=>({name:names[i],amount:+x.amount||0}));
+  }else if(Array.isArray(state.shareAllocations[key])){
+    state.shareAllocations[key]=state.shareAllocations[key].slice(0,4).map((x,i)=>({name:names[i],amount:+x.amount||0}));
+  }else{
+    state.shareAllocations[key]=names.map((name,i)=>({name,amount:+(state.shares?.[i]?.amount||0)}));
+  }
+}
+function getBenefitData(){
+  const start=document.getElementById('benefitStart')?.value||'2026-08-01';
+  const end=document.getElementById('benefitEnd')?.value||'2026-08-30';
+  let partRevenue=0,partProfit=0,service=0,expenses=0,payroll=0,stock=0;
+  (state.sales||[]).forEach(x=>{
+    if(!dateInRange(x.date,start,end))return;
+    const qty=+x.qty||0,sell=+x.price||0,inv=state.inventory.find(i=>i.code===x.code);
+    const buy=x.buyPrice!=null?+x.buyPrice:(+inv?.buy||0);
+    partRevenue+=qty*sell;
+    partProfit+=qty*(sell-buy);
+  });
+  (state.wos||[]).forEach(x=>{
+    const d=x.in||x.date;
+    if(x.status!=='Cancelled'&&dateInRange(d,start,end))service+=+x.service||0;
+  });
+  (state.expenses||[]).forEach(x=>{
+    if(dateInRange(x.date,start,end))expenses+=+x.amount||0;
+  });
+  (state.payroll||[]).forEach(x=>{
+    const period=x.period||'';
+    if(period && period===start.slice(0,7))payroll+=+x.total||0;
+  });
+  (state.inventory||[]).forEach(x=>{
+    if(dateInRange(x.date,start,end))stock+=(+x.stock||0)*(+x.buy||0);
+  });
+  const gross=partProfit+service;
+  const operating=expenses+payroll+stock;
+  const beforeShare=Math.max(0,gross-operating);
+  const key=start+'__'+end;
+  const shares=(state.shareAllocations?.[key]||[]).slice(0,4);
+  const shareTaken=shares.reduce((a,x)=>a+(+x.amount||0),0);
+  const net=Math.max(0,beforeShare-shareTaken);
+  return {start,end,partRevenue,partProfit,service,gross,expenses,payroll,stock,operating,beforeShare,shareTaken,net};
+}
+function renderBenefit(){
+  if(!document.getElementById('benefitStart'))return;
+  initBenefit();
+  const d=getBenefitData();
+  benefitPartProfit.textContent=money(d.partProfit);
+  benefitService.textContent=money(d.service);
+  benefitExpenses.textContent=money(d.expenses);
+  benefitPayroll.textContent=money(d.payroll);
+  benefitStock.textContent=money(d.stock);
+  benefitNet.textContent=money(d.net);
+  benefitPeriodLabel.textContent=`${d.start} s/d ${d.end}`;
+
+  const rows=[
+    ['Profit Part',d.partProfit,''],
+    ['Total Jasa',d.service,'service'],
+    ['Pengeluaran',d.expenses,''],
+    ['Payroll',d.payroll,''],
+    ['Barang & Stock',d.stock,''],
+    ['Pembagian Hasil',d.shareTaken,''],
+    ['Omzet Bersih',d.net,'total']
+  ];
+  const max=Math.max(...rows.map(r=>r[1]),1);
+  benefitChart.innerHTML=rows.map(r=>`<div class="chart-row"><div class="chart-label">${r[0]}</div><div class="chart-track"><div class="chart-bar ${r[2]}" style="width:${Math.min(100,Math.max(0,r[1])/max*100)}%"></div></div><div class="chart-value">${money(r[1])}</div></div>`).join('');
+
+  const key=benefitKey();
+  const shares=state.shareAllocations[key]||[];
+  shareTable.innerHTML=`<table class="share-table"><thead><tr><th>Pembagian Hasil</th><th>Nominal</th></tr></thead><tbody>${shares.map((sh,i)=>`<tr><td><b>${escapeHtml(sh.name)}</b></td><td><input id="shareAmt${i}" type="number" min="0" step="1000" value="${+sh.amount||0}" oninput="updateShareTotal()"></td></tr>`).join('')}<tr class="share-total"><td>Total Pembagian Hasil</td><td id="shareInputTotal">${money(shares.reduce((a,x)=>a+(+x.amount||0),0))}</td></tr></tbody></table>`;
+  shareGross.textContent=money(d.gross);
+  shareExpenses.textContent=money(d.operating);
+  shareTaken.textContent=money(d.shareTaken);
+  shareAsset.textContent=money(d.net);
+  updateShareTotal();
+  renderShareHistory();
+}
+function updateShareTotal(){
+  const total=[0,1,2,3].reduce((a,i)=>a+(+(document.getElementById('shareAmt'+i)?.value)||0),0);
+  const d=getBenefitData();
+  const el=document.getElementById('shareInputTotal');
+  if(el){el.textContent=money(total);el.classList.toggle('invalid',total>d.beforeShare);el.classList.toggle('valid',total<=d.beforeShare);}
+}
+function saveShares(){
+  const key=benefitKey();
+  const names=['Owner 1','Owner 2','Investor 1','Investor 2'];
+  const arr=names.map((name,i)=>({name,amount:+(document.getElementById('shareAmt'+i)?.value)||0}));
+  const d=getBenefitData();
+  const total=arr.reduce((a,x)=>a+x.amount,0);
+  if(total>d.beforeShare){toast('Total pembagian melebihi Omzet Bersih sebelum pembagian');return}
+  const now=new Date().toISOString();
+  const parts=key.split('__');
+  const idx=state.shareHistory.findIndex(r=>r.key===key);
+  const record={id:idx>=0?state.shareHistory[idx].id:crypto.randomUUID(),key,start:parts[0],end:parts[1],allocations:arr,createdAt:idx>=0?state.shareHistory[idx].createdAt:now,updatedAt:now};
+  if(idx>=0)state.shareHistory[idx]=record; else state.shareHistory.push(record);
+  state.shareAllocations[key]=arr; state.shares=arr; save(); renderBenefit();
+  toast((idx>=0?'Pembagian hasil di-update: ':'Pembagian hasil tersimpan: ')+parts[0]+' s/d '+parts[1]);
+}
+function editShareHistory(id){
+  const r=state.shareHistory.find(x=>x.id===id); if(!r)return;
+  benefitStart.value=r.start; benefitEnd.value=r.end;
+  state.shareAllocations[r.key]=r.allocations.map(x=>({...x}));
+  renderBenefit(); window.scrollTo({top:0,behavior:'smooth'}); toast('Mode edit pembagian hasil untuk '+r.start+' s/d '+r.end);
+}
+function deleteShareHistory(id){
+  const r=state.shareHistory.find(x=>x.id===id); if(!r)return;
+  if(!confirm('Hapus history pembagian hasil periode '+r.start+' s/d '+r.end+'?'))return;
+  state.shareHistory=state.shareHistory.filter(x=>x.id!==id); delete state.shareAllocations[r.key]; save(); renderBenefit(); toast('History pembagian hasil dihapus');
+}
+function renderShareHistory(){
+  const el=document.getElementById('shareHistoryTable'); if(!el)return;
+  const rows=state.shareHistory.slice().sort((a,b)=>new Date(b.start)-new Date(a.start));
+  el.innerHTML=rows.length?`<table><thead><tr><th>Periode</th><th>Owner 1</th><th>Owner 2</th><th>Investor 1</th><th>Investor 2</th><th>Total</th><th>Aksi</th></tr></thead><tbody>${rows.map(r=>{const a=r.allocations||[];const total=a.reduce((s,x)=>s+(+x.amount||0),0);return `<tr><td><b>${r.start} s/d ${r.end}</b></td><td>${money(a[0]?.amount)}</td><td>${money(a[1]?.amount)}</td><td>${money(a[2]?.amount)}</td><td>${money(a[3]?.amount)}</td><td><b>${money(total)}</b></td><td><div class="slip-actions"><button class="btn btn-blue small" onclick="editShareHistory('${r.id}')">Edit</button><button class="btn btn-red small" onclick="deleteShareHistory('${r.id}')">Delete</button></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Belum ada history pembagian hasil.</div>';
+}
+function buildBenefitReport(){
+  const d=getBenefitData(); const key=benefitKey(); const shares=state.shareAllocations[key]||[];
+  const shareRows=shares.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td class="num">${money(x.amount)}</td></tr>`).join('');
+  document.getElementById('printContent').className='print-area benefit-report';
+  document.getElementById('printContent').innerHTML=`
+    <div class="report-head"><img class="report-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'"><div><h1>BENEFIT & PEMBAGIAN HASIL</h1><div class="sub">HEKAND AUTO DIVISION • Laporan periode ${escapeHtml(d.start)} s/d ${escapeHtml(d.end)}</div></div></div>
+    <div class="report-grid">
+      <div class="report-card"><div class="label">Keuntungan Penjualan Part</div><div class="value">${money(d.partProfit)}</div></div>
+      <div class="report-card"><div class="label">Total Keseluruhan Jasa</div><div class="value">${money(d.service)}</div></div>
+      <div class="report-card"><div class="label">Total Pengeluaran</div><div class="value">${money(d.operating)}</div></div>
+      <div class="report-card"><div class="label">Omzet Bersih / Asset Masih Ada</div><div class="value">${money(d.net)}</div></div>
+    </div>
+    <table><thead><tr><th>Komponen</th><th class="num">Nominal</th></tr></thead><tbody>
+      <tr><td>Profit Part</td><td class="num">${money(d.partProfit)}</td></tr><tr><td>Total Jasa</td><td class="num">${money(d.service)}</td></tr><tr><td>Pengeluaran</td><td class="num">-${money(d.expenses)}</td></tr><tr><td>Payroll</td><td class="num">-${money(d.payroll)}</td></tr><tr><td>Barang & Stock</td><td class="num">-${money(d.stock)}</td></tr><tr class="grand"><td>Omzet Bersih Sebelum Pembagian</td><td class="num">${money(d.beforeShare)}</td></tr>
+    </tbody></table>
+    <table><thead><tr><th>Pembagian Hasil</th><th class="num">Nominal</th></tr></thead><tbody>${shareRows}<tr class="grand"><td>Total Pembagian Hasil</td><td class="num">${money(d.shareTaken)}</td></tr><tr class="grand"><td>OMZET BERSIH / ASSET MASIH ADA</td><td class="num">${money(d.net)}</td></tr></tbody></table>
+    <div class="footer">Laporan ini dibuat dari data transaksi HEKAND Auto Division berdasarkan periode yang dipilih. Dicetak ${fmtDate(new Date().toISOString())}.</div>`;
+}
+function printBenefitReport(){buildBenefitReport();document.getElementById('printModal').classList.add('show');}
+function exportBenefitPDF(){buildBenefitReport();document.getElementById('printModal').classList.add('show');setTimeout(()=>window.print(),250);}
+
+function showPayrollSlip(id,autoPrint=false){
+  const x=state.payroll.find(a=>a.id===id);if(!x)return;
+  const period=x.period||'-';
+  document.getElementById('printContent').className='print-area payroll-slip';
+  document.getElementById('printContent').innerHTML=`
+    <div class="wo-head">
+      <img class="wo-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+      <div class="wo-title"><div class="smallcaps">HEKAND AUTO DIVISION</div><h1>SLIP GAJI</h1><div class="wo-no">${escapeHtml(period)}</div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="label">ID Karyawan</div><div class="value">${escapeHtml(x.employeeId||'-')}</div></div>
+      <div class="info-cell"><div class="label">Nama Karyawan</div><div class="value">${escapeHtml(x.name||'-')}</div></div>
+      <div class="info-cell"><div class="label">Posisi / Jabatan</div><div class="value">${escapeHtml(x.position||'-')}</div></div>
+      <div class="info-cell"><div class="label">Periode</div><div class="value">${escapeHtml(period)}</div></div>
+    </div>
+    <div class="section-title">Rincian Penghasilan</div>
+    <table class="wo-table">
+      <tbody>
+        <tr><td>Gaji Pokok</td><td class="num"><b>${money(x.base)}</b></td></tr>
+        <tr><td>Total Pekerjaan / Jasa</td><td class="num">${money(x.job)}</td></tr>
+        <tr><td>Hasil Persentase (${x.pct||0}%)</td><td class="num">${money(x.percentResult||0)}</td></tr>
+        <tr><td>Bonus</td><td class="num">${money(x.bonus||0)}</td></tr>
+      </tbody>
+    </table>
+    <div class="total-box">
+      <div class="total-row grand"><span>TOTAL PENGHASILAN</span><span>${money(x.total)}</span></div>
+    </div>
+    <div class="signatures">
+      <div><div class="sig-space"></div><div class="sig-line">KARYAWAN</div></div>
+      <div><div class="sig-space"></div><div class="sig-line">OWNER / MANAGEMENT</div></div>
+    </div>
+    <div class="footer-note"><span>Slip gaji resmi HEKAND Auto Division.</span><span>Dicetak ${fmtDate(new Date().toISOString())}</span></div>`;
+  document.getElementById('printModal').classList.add('show');
+  if(autoPrint)setTimeout(()=>window.print(),150);
+}
+function printPayrollSlip(id){showPayrollSlip(id,true)}
+
+function calcPayroll(){
+ const job=+document.getElementById('payJob').value||0;
+ const pct=+document.getElementById('payPercent').value||0;
+ const base=+document.getElementById('payBase').value||0;
+ const bonus=+document.getElementById('payBonus').value||0;
+ const result=job*pct/100, total=base+result+bonus;
+ document.getElementById('payPercentResult').value=result;
+ document.getElementById('payTotal').value=total;
+}
+document.getElementById('payForm').addEventListener('submit',e=>{
+ e.preventDefault();calcPayroll();
+ const f=e.target, editId=f.dataset.editId||'';
+ const base=+payBase.value||0,pct=+payPercent.value||0,bonus=+payBonus.value||0,job=+payJob.value||0;
+ const percentResult=job*pct/100,total=base+percentResult+bonus;
+ const rec={employeeId:payEmployeeId.value,name:payName.value,position:payPosition.value,period:payPeriod.value,job,base,pct,percentResult,bonus,total};
+ if(editId){
+   const idx=state.payroll.findIndex(x=>x.id===editId);
+   if(idx>=0){state.payroll[idx]={...state.payroll[idx],...rec};toast('Payroll berhasil di-update')}
+ }else{
+   state.payroll.push({id:crypto.randomUUID(),...rec});toast('Payroll tersimpan')
+ }
+ delete f.dataset.editId;save();e.target.reset();calcPayroll();
+ f.querySelector('button[type="submit"]').textContent='Simpan Payroll';renderAll();
+});
+
+function editPayroll(id){
+ const x=state.payroll.find(a=>a.id===id);if(!x)return;
+ showPage('payroll');const f=document.getElementById('payForm');f.dataset.editId=id;
+ payEmployeeId.value=x.employeeId||'';payName.value=x.name||'';payPosition.value=x.position||'';payPeriod.value=x.period||'';
+ payJob.value=x.job||0;payBase.value=x.base||0;payPercent.value=x.pct||0;payBonus.value=x.bonus||0;
+ calcPayroll();f.querySelector('button[type="submit"]').textContent='Update Payroll';
+ window.scrollTo({top:0,behavior:'smooth'});toast('Mode Edit Payroll');
+}
+
+function deletePayroll(id){
+ const x=state.payroll.find(a=>a.id===id); if(!x)return;
+ if(!confirm('Hapus payroll '+(x.name||'karyawan')+' periode '+(x.period||'-')+'?'))return;
+ state.payroll=state.payroll.filter(a=>a.id!==id); save(); renderAll(); toast('Payroll dihapus');
+}
+
+function renderPayroll(){
+ document.getElementById('payTable').innerHTML=state.payroll.length?`<table><thead><tr><th>ID Karyawan</th><th>Nama</th><th>Posisi / Jabatan</th><th>Periode</th><th>Pekerjaan/Jasa</th><th>Gaji Pokok</th><th>%</th><th>Hasil %</th><th>Bonus</th><th>Total</th><th>Aksi</th></tr></thead><tbody>${state.payroll.slice().reverse().map(x=>`<tr><td>${x.employeeId||'-'}</td><td>${x.name}</td><td>${x.position||'-'}</td><td>${x.period}</td><td>${money(x.job)}</td><td>${money(x.base)}</td><td>${x.pct}%</td><td>${money(x.percentResult||0)}</td><td>${money(x.bonus)}</td><td><b>${money(x.total)}</b></td><td><div class="slip-actions"><button class="btn btn-blue small" onclick="editPayroll('${x.id}')">Edit</button><button class="btn small" onclick="showPayrollSlip('${x.id}')">View Slip</button><button class="btn btn-red small" onclick="printPayrollSlip('${x.id}')">Print Slip</button><button class="btn btn-red small" onclick="deletePayroll('${x.id}')">Delete</button></div></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Belum ada payroll.</div>';
+}
+function avg(cat){
+ const a=state.wos.filter(x=>x.cat===cat&&x.in&&x.out).map(x=>(new Date(x.out)-new Date(x.in))/86400000).filter(x=>x>=0);
+ return a.length?(a.reduce((s,x)=>s+x,0)/a.length).toFixed(1):'0';
+}
+function renderDashboard(){
+ const n=c=>state.wos.filter(x=>x.cat===c).length;
+ mPainting.textContent=n('PT');mBody.textContent=n('RP');mDetail.textContent=n('DT');mWO.textContent=state.wos.length;
+ aPainting.textContent=avg('PT')+' hari';aBody.textContent=avg('RP')+' hari';aDetail.textContent=avg('DT')+' hari';
+ const active=state.wos.filter(x=>x.status!=='Completed'&&x.status!=='Cancelled').slice(-6).reverse();
+ taskHighlight.innerHTML=active.length?active.map(x=>`<div class="statline"><span><b>${x.code}</b> • ${x.plate} • ${x.customer}</span><span class="badge ${x.status==='Waiting Part'?'amber':'blue'}">${x.status}</span></div>`).join(''):'<div class="empty">Tidak ada task aktif.</div>';
+ const age=state.inventory.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,6);
+ aging.innerHTML=age.length?age.map(x=>`<div class="statline"><span>${x.name}<br><span class="small muted">${x.code}</span></span><span>${x.stock} pcs</span></div>`).join(''):'<div class="empty">Belum ada data stock.</div>';
+ const fm=state.inventory.slice().sort((a,b)=>b.stock-a.stock).slice(0,6);
+ fastMoving.innerHTML=fm.length?fm.map(x=>`<div class="statline"><span>${x.name}</span><b>${x.stock} pcs</b></div>`).join(''):'<div class="empty">Belum ada data.</div>';
+ const weeks={};
+ (state.sales||[]).forEach(x=>{
+   let d=new Date(x.date); if(isNaN(d))return;
+   let k=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'});
+   weeks[k]=(weeks[k]||0)+x.total;
+ });
+ salesChart.innerHTML=Object.entries(weeks).slice(-6).map(([k,v])=>`<div class="statline"><span>${k}</span><span>${money(v)}</span></div>`).join('')||'<div class="empty">Data penjualan barang akan muncul di sini.</div>';
+}
+function renderAll(){
+  initBenefit();
+  renderDashboard();renderWO();renderSales();renderInventory();renderExpenses();renderBenefit();renderPayroll();
+  if(document.getElementById('salesCode')){
+    fillSalesItems(); setSalesDate(); calcSalesTotal();
+  }
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify({...state,currentUser:null},null,2)],{type:'application/json'});downloadBlob(blob,'hekand-data.json');toast('Data berhasil di-export')
+}
+function backup(){exportData()}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+// Auto-login persistence for the current browser session.
+loadCentralState().then(()=>ensureUsers()).then(()=>{if(state.currentUser&&state.users[state.currentUser]&&apiToken)startApp();else {state.currentUser=null;save();document.getElementById('login').style.display='flex';}});
+</script>
+</body>
+</html>
