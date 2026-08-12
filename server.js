@@ -12,7 +12,7 @@ const DB_FILE = path.join(DB_DIR, 'hekand-db.json');
 if (!process.env.VERCEL) fs.mkdirSync(DB_DIR, { recursive: true });
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || '';
 
 const supabase = (SUPABASE_URL && SUPABASE_KEY)
   ? createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } })
