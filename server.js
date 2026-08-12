@@ -190,10 +190,10 @@ const server = http.createServer(async (req, res) => {
     return json(res, 500, { error: 'Server error', detail: e.message });
   }
 });
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`HEKAND Auto Division V13 running on ${PORT}`);
+  });
+}
 
-server.listen(PORT, () => {
-  console.log(`HEKAND Auto Division v13 server listening on port ${PORT}`);
-  console.log(supabase
-    ? 'Central database: Supabase'
-    : 'Central database: LOCAL FALLBACK (set SUPABASE_URL and SUPABASE_SECRET_KEY for cloud)');
-});
+module.exports = server;
