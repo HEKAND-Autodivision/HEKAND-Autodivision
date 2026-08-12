@@ -1,0 +1,14 @@
+{
+  "name": "hekand-auto-division",
+  "version": "13.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4"
+  }
+}

@@ -1,0 +1,15 @@
+-- HEKAND v13 bridge table for the existing UI state.
+-- Run this in Supabase SQL Editor.
+
+create table if not exists public.app_state (
+  id text primary key,
+  state jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+-- This table is accessed by the Node.js backend using a SERVER-ONLY
+-- Supabase secret key. Do not expose that key to the browser.
+alter table public.app_state enable row level security;
+
+-- No public/anon policies are intentionally created here.
+-- The server uses the secret key, which bypasses RLS.
