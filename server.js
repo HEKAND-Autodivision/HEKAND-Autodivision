@@ -191,6 +191,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 if (require.main === module) {
+  if (require.main === module) {
   server.listen(PORT, () => {
     console.log(`HEKAND Auto Division V13 running on ${PORT}`);
   });
