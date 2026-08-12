@@ -1,7 +1,0 @@
-{
-  "name": "hekand-auto-division",
-  "version": "12.0.0",
-  "private": true,
-  "scripts": {"start":"node server.js"},
-  "engines": {"node":">=18"}
-}
