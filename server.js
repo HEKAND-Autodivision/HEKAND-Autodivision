@@ -9,25 +9,43 @@ const ROOT = __dirname;
 const DB_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DB_DIR, 'hekand-db.json');
 
-if (!process.env.VERCEL) fs.mkdirSync(DB_DIR, { recursive: true });
+if (!process.env.VERCEL) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
+}
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || '';
 
-const supabase = (SUPABASE_URL && SUPABASE_KEY)
-  ? createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } })
-  : null;
+const supabase =
+  SUPABASE_URL && SUPABASE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: false }
+      })
+    : null;
 
-const hash = s => crypto.createHash('sha256').update(String(s)).digest('hex');
+const hash = s =>
+  crypto.createHash('sha256').update(String(s)).digest('hex');
 
 function initialState() {
   return {
-    wos: [], inventory: [], sales: [], payroll: [], expenses: [],
+    wos: [],
+    inventory: [],
+    sales: [],
+    payroll: [],
+    expenses: [],
     seq: { RP: 1, PT: 1, DT: 1 },
     currentUser: null,
     users: {
-      owner: { username: 'owner', role: 'owner', passwordHash: hash('owner123') },
-      admin: { username: 'admin', role: 'admin', passwordHash: hash('admin123') }
+      owner: {
+        username: 'owner',
+        role: 'owner',
+        passwordHash: hash('owner123')
+      },
+      admin: {
+        username: 'admin',
+        role: 'admin',
+        passwordHash: hash('admin123')
+      }
     },
     shareAllocations: {},
     shareHistory: [],
@@ -41,8 +59,11 @@ function initialState() {
 }
 
 function readLocalDB() {
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
-  catch { return { state: initialState() }; }
+  try {
+    return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+  } catch {
+    return { state: initialState() };
+  }
 }
 
 function writeLocalDB(db) {
@@ -56,7 +77,9 @@ if (!process.env.VERCEL && !fs.existsSync(DB_FILE)) {
 }
 
 async function readCentralState() {
-  if (!supabase) return readLocalDB().state;
+  if (!supabase) {
+    return readLocalDB().state;
+  }
 
   const { data, error } = await supabase
     .from('app_state')
@@ -71,7 +94,10 @@ async function readCentralState() {
 
     const { error: insertError } = await supabase
       .from('app_state')
-      .insert({ id: 'hekand', state });
+      .insert({
+        id: 'hekand',
+        state
+      });
 
     if (insertError) throw insertError;
 
@@ -101,7 +127,93 @@ async function writeCentralState(state) {
   if (error) throw error;
 }
 
-const sessions = new Map();
+
+/* =========================================================
+   SECURE STATELESS SESSION
+   ========================================================= */
+
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  process.env.SUPABASE_ANON_KEY ||
+  'hekand-session-secret';
+
+function createToken(username) {
+  const payload = Buffer.from(
+    JSON.stringify({
+      username,
+      exp: Date.now() + 7 * 24 * 60 * 60 * 1000
+    })
+  ).toString('base64url');
+
+  const signature = crypto
+    .createHmac('sha256', SESSION_SECRET)
+    .update(payload)
+    .digest('base64url');
+
+  return `${payload}.${signature}`;
+}
+
+function auth(req) {
+  const header = req.headers.authorization || '';
+
+  if (!header.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = header.slice(7);
+  const parts = token.split('.');
+
+  if (parts.length !== 2) {
+    return null;
+  }
+
+  const [payload, signature] = parts;
+
+  const expected = crypto
+    .createHmac('sha256', SESSION_SECRET)
+    .update(payload)
+    .digest('base64url');
+
+  if (signature.length !== expected.length) {
+    return null;
+  }
+
+  try {
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+      )
+    ) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  try {
+    const data = JSON.parse(
+      Buffer.from(payload, 'base64url').toString('utf8')
+    );
+
+    if (!data.username) {
+      return null;
+    }
+
+    if (!data.exp || Date.now() > data.exp) {
+      return null;
+    }
+
+    return data.username;
+  } catch {
+    return null;
+  }
+}
+
+
+/* =========================================================
+   JSON RESPONSE
+   ========================================================= */
 
 function json(res, status, obj) {
   const body = JSON.stringify(obj);
@@ -114,12 +226,10 @@ function json(res, status, obj) {
   res.end(body);
 }
 
-function auth(req) {
-  const h = req.headers.authorization || '';
-  const token = h.startsWith('Bearer ') ? h.slice(7) : '';
 
-  return sessions.get(token) || null;
-}
+/* =========================================================
+   READ REQUEST BODY
+   ========================================================= */
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -130,6 +240,7 @@ function readBody(req) {
 
       if (b.length > 10 * 1024 * 1024) {
         req.destroy();
+        reject(new Error('Request body too large'));
       }
     });
 
@@ -144,6 +255,11 @@ function readBody(req) {
     req.on('error', reject);
   });
 }
+
+
+/* =========================================================
+   STATIC FILE SERVER
+   ========================================================= */
 
 function serve(req, res) {
   let u = decodeURIComponent(req.url.split('?')[0]);
@@ -173,28 +289,48 @@ function serve(req, res) {
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
     '.svg': 'image/svg+xml',
+    '.json': 'application/json; charset=utf-8',
     '.txt': 'text/plain; charset=utf-8'
   };
 
   res.writeHead(200, {
-    'Content-Type': types[ext] || 'application/octet-stream'
+    'Content-Type':
+      types[ext] || 'application/octet-stream'
   });
 
   fs.createReadStream(file).pipe(res);
 }
 
+
+/* =========================================================
+   SERVER
+   ========================================================= */
+
 const server = http.createServer(async (req, res) => {
   try {
 
+    /* GET CENTRAL STATE */
     if (
       req.method === 'GET' &&
       req.url.startsWith('/api/state')
     ) {
+      const user = auth(req);
+
+      if (!user) {
+        return json(res, 401, {
+          error: 'Unauthorized'
+        });
+      }
+
       const state = await readCentralState();
 
-      return json(res, 200, { state });
+      return json(res, 200, {
+        state
+      });
     }
 
+
+    /* LOGIN */
     if (
       req.method === 'POST' &&
       req.url === '/api/login'
@@ -217,11 +353,7 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
-      const token = crypto
-        .randomBytes(32)
-        .toString('hex');
-
-      sessions.set(token, user.username);
+      const token = createToken(user.username);
 
       return json(res, 200, {
         token,
@@ -229,6 +361,8 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+
+    /* SAVE CENTRAL STATE */
     if (
       req.method === 'PUT' &&
       req.url === '/api/state'
@@ -249,6 +383,10 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
+      /*
+       * currentUser is kept local to each device.
+       * Central database stores the shared application state.
+       */
       b.currentUser = null;
 
       await writeCentralState(b);
@@ -258,21 +396,24 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+
+    /* LOGOUT */
     if (
       req.method === 'POST' &&
       req.url === '/api/logout'
     ) {
-      const h = req.headers.authorization || '';
-
-      if (h.startsWith('Bearer ')) {
-        sessions.delete(h.slice(7));
-      }
+      /*
+       * Stateless token.
+       * Nothing needs to be deleted from server memory.
+       */
 
       return json(res, 200, {
         ok: true
       });
     }
 
+
+    /* STATIC FILES */
     return serve(req, res);
 
   } catch (e) {
@@ -285,6 +426,7 @@ const server = http.createServer(async (req, res) => {
     });
   }
 });
+
 
 if (require.main === module) {
   server.listen(PORT, () => {
