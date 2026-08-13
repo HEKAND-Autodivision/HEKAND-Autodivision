@@ -1198,5 +1198,11 @@ function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.
 // Auto-login persistence for the current browser session.
 loadCentralState().then(()=>ensureUsers()).then(()=>{if(state.currentUser&&state.users[state.currentUser]&&apiToken)startApp();else {state.currentUser=null;save();document.getElementById('login').style.display='flex';}});
 </script>
+  if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js");
+  });
+}
+</script>
 </body>
 </html>
