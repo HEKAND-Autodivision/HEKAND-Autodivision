@@ -144,69 +144,52 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;
 }
 
 @media print {
-
   @page {
-    size: 148mm 210mm;
+    size: A5 portrait;
     margin: 0;
   }
 
   html,
   body {
-    width: 148mm !important;
-    height: 210mm !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
   }
 
-  body * {
-    visibility: hidden !important;
-  }
-
-  #printContent,
-  #printContent * {
-    visibility: visible !important;
+  body > * {
+    display: none !important;
   }
 
   #printContent {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-
+    display: block !important;
+    position: static !important;
     width: 148mm !important;
-    height: 210mm !important;
-
+    min-height: 210mm !important;
     margin: 0 !important;
     padding: 6mm !important;
-
     box-sizing: border-box !important;
-
     background: #fff !important;
     overflow: hidden !important;
   }
 
-  .sidebar,
-  .topbar,
-  .no-print,
-  .modal > .actions {
+  #printContent * {
+    visibility: visible !important;
+  }
+
+  .no-print {
     display: none !important;
   }
 
-  .modal,
-  .modal-box,
   .print-area {
     width: 100% !important;
-    max-width: none !important;
     min-height: 0 !important;
     height: auto !important;
-
     margin: 0 !important;
     padding: 0 !important;
-
-    background: #fff !important;
-    border: 0 !important;
     box-shadow: none !important;
-    border-radius: 0 !important;
+    border: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid-page !important;
   }
 }
 
