@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/Asset/Hekand-logo.png",
+      "src": "/Asset/hekand-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
