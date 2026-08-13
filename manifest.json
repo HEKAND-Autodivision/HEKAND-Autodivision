@@ -1,0 +1,17 @@
+{
+  "name": "HEKAND Auto Division",
+  "short_name": "HEKAND Auto",
+  "description": "Aplikasi Manajemen HEKAND Auto Division",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/hekand-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
