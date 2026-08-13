@@ -8,6 +8,8 @@
         "includeFiles": [
           "index.html",
           "hekand-logo.png",
+          "manifest.json",
+          "service-worker.js",
           "Asset/**"
         ]
       }
