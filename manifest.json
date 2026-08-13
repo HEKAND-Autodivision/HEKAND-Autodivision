@@ -4,12 +4,12 @@
   "description": "Aplikasi Manajemen HEKAND Auto Division",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#111111",
+  "background_color": "#111317",
+  "theme_color": "#111317",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/hekand-logo.png",
+      "src": "/assets/hekand-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
