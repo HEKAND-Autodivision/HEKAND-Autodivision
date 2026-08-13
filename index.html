@@ -692,7 +692,7 @@ function showPrint(x){
 
  document.getElementById('printContent').innerHTML=`
  <div class="wo-head">
-   <img class="wo-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+   <img class="wo-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
    <div class="wo-title">
      <div class="smallcaps">HEKAND AUTO DIVISION</div>
      <h1>WORK ORDER</h1>
@@ -811,7 +811,7 @@ function showSalePrint(id){
  document.getElementById('printContent').className='print-area sales-print';
  document.getElementById('printContent').innerHTML=`
  <div class="sale-head">
-   <img class="sale-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+   <img class="sale-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
    <div class="sale-title">
      <div class="brandline">HEKAND AUTO DIVISION</div>
      <h1>NOTA PENJUALAN</h1>
@@ -1062,7 +1062,7 @@ function buildBenefitReport(){
   const shareRows=shares.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td class="num">${money(x.amount)}</td></tr>`).join('');
   document.getElementById('printContent').className='print-area benefit-report';
   document.getElementById('printContent').innerHTML=`
-    <div class="report-head"><img class="report-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'"><div><h1>BENEFIT & PEMBAGIAN HASIL</h1><div class="sub">HEKAND AUTO DIVISION • Laporan periode ${escapeHtml(d.start)} s/d ${escapeHtml(d.end)}</div></div></div>
+    <div class="report-head"><img class="report-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'"><div><h1>BENEFIT & PEMBAGIAN HASIL</h1><div class="sub">HEKAND AUTO DIVISION • Laporan periode ${escapeHtml(d.start)} s/d ${escapeHtml(d.end)}</div></div></div>
     <div class="report-grid">
       <div class="report-card"><div class="label">Keuntungan Penjualan Part</div><div class="value">${money(d.partProfit)}</div></div>
       <div class="report-card"><div class="label">Total Keseluruhan Jasa</div><div class="value">${money(d.service)}</div></div>
@@ -1084,7 +1084,7 @@ function showPayrollSlip(id,autoPrint=false){
   document.getElementById('printContent').className='print-area payroll-slip';
   document.getElementById('printContent').innerHTML=`
     <div class="wo-head">
-      <img class="wo-logo" src="assets/hekand-logo.png" onerror="this.style.display='none'">
+      <img class="wo-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
       <div class="wo-title"><div class="smallcaps">HEKAND AUTO DIVISION</div><h1>SLIP GAJI</h1><div class="wo-no">${escapeHtml(period)}</div></div>
     </div>
     <div class="info-grid">
