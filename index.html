@@ -13,7 +13,7 @@
 *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:
 radial-gradient(circle at 20% 0%,rgba(215,25,32,.13),transparent 30%),
 linear-gradient(135deg,#070809,#111317 55%,#090a0c);color:#f4f5f7;min-height:100vh}
-body:before{content:"";position:fixed;inset:0;background:url("Asset/hekand-logo.png") center 25%/620px auto no-repeat;
+body:before{content:"";position:fixed;inset:0;background:url("/Asset/hekand-logo.png") center 25%/620px auto no-repeat;
 opacity:.025;pointer-events:none;z-index:-1}
 button,input,select,textarea{font:inherit} button{cursor:pointer}
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -155,7 +155,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;
 <body>
 <div id="login" class="login">
   <div class="login-card">
-    <img src="Asset/hekand-logo.png" class="login-logo">
+    <img src="/Asset/hekand-logo.png" class="login-logo">
     <h2 style="text-align:center">Auto Division Management</h2>
     <p class="muted" style="text-align:center">Workshop • Body Repair • Painting • Detailing</p>
     <label>Username</label><input id="loginUser" placeholder="owner / admin">
@@ -167,7 +167,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;
 
 <div id="app" class="app">
   <aside class="sidebar">
-    <div class="brand"><img src="Asset/hekand-logo.png"></div>
+    <div class="brand"><img src="/Asset/hekand-logo.png"></div>
     <div class="userbox"><div id="userName"></div><div class="small muted" id="userRole"></div></div>
     <div class="nav">
       <button data-page="dashboard" class="active">▦ Dashboard</button>
@@ -692,7 +692,7 @@ function showPrint(x){
 
  document.getElementById('printContent').innerHTML=`
  <div class="wo-head">
-   <img class="wo-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
+   <img class="wo-logo" src="/Asset/hekand-logo.png" onerror="this.style.display='none'">
    <div class="wo-title">
      <div class="smallcaps">HEKAND AUTO DIVISION</div>
      <h1>WORK ORDER</h1>
@@ -811,7 +811,7 @@ function showSalePrint(id){
  document.getElementById('printContent').className='print-area sales-print';
  document.getElementById('printContent').innerHTML=`
  <div class="sale-head">
-   <img class="sale-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
+   <img class="sale-logo" src="/Asset/hekand-logo.png" onerror="this.style.display='none'">
    <div class="sale-title">
      <div class="brandline">HEKAND AUTO DIVISION</div>
      <h1>NOTA PENJUALAN</h1>
@@ -1062,7 +1062,7 @@ function buildBenefitReport(){
   const shareRows=shares.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td class="num">${money(x.amount)}</td></tr>`).join('');
   document.getElementById('printContent').className='print-area benefit-report';
   document.getElementById('printContent').innerHTML=`
-    <div class="report-head"><img class="report-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'"><div><h1>BENEFIT & PEMBAGIAN HASIL</h1><div class="sub">HEKAND AUTO DIVISION • Laporan periode ${escapeHtml(d.start)} s/d ${escapeHtml(d.end)}</div></div></div>
+    <div class="report-head"><img class="report-logo" src="/Asset/hekand-logo.png" onerror="this.style.display='none'"><div><h1>BENEFIT & PEMBAGIAN HASIL</h1><div class="sub">HEKAND AUTO DIVISION • Laporan periode ${escapeHtml(d.start)} s/d ${escapeHtml(d.end)}</div></div></div>
     <div class="report-grid">
       <div class="report-card"><div class="label">Keuntungan Penjualan Part</div><div class="value">${money(d.partProfit)}</div></div>
       <div class="report-card"><div class="label">Total Keseluruhan Jasa</div><div class="value">${money(d.service)}</div></div>
@@ -1084,7 +1084,7 @@ function showPayrollSlip(id,autoPrint=false){
   document.getElementById('printContent').className='print-area payroll-slip';
   document.getElementById('printContent').innerHTML=`
     <div class="wo-head">
-      <img class="wo-logo" src="Asset/hekand-logo.png" onerror="this.style.display='none'">
+      <img class="wo-logo" src="/Asset/hekand-logo.png" onerror="this.style.display='none'">
       <div class="wo-title"><div class="smallcaps">HEKAND AUTO DIVISION</div><h1>SLIP GAJI</h1><div class="wo-no">${escapeHtml(period)}</div></div>
     </div>
     <div class="info-grid">
