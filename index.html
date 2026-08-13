@@ -151,43 +151,68 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;
 
   html,
   body {
+    width: 148mm !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
   }
 
-  body > * {
+  body {
+    overflow: visible !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .no-print,
+  .modal > .actions,
+  .page {
     display: none !important;
+  }
+
+  .main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .modal {
+    display: block !important;
+    position: static !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+
+  .modal-box {
+    display: block !important;
+    width: 148mm !important;
+    max-width: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
   }
 
   #printContent {
     display: block !important;
-    position: static !important;
     width: 148mm !important;
-    min-height: 210mm !important;
     margin: 0 !important;
     padding: 6mm !important;
     box-sizing: border-box !important;
     background: #fff !important;
-    overflow: hidden !important;
-  }
-
-  #printContent * {
-    visibility: visible !important;
-  }
-
-  .no-print {
-    display: none !important;
   }
 
   .print-area {
+    display: block !important;
     width: 100% !important;
     min-height: 0 !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
+    box-sizing: border-box !important;
     box-shadow: none !important;
     border: 0 !important;
+    border-radius: 0 !important;
     page-break-after: avoid !important;
     break-after: avoid-page !important;
   }
