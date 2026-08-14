@@ -574,32 +574,91 @@ if(!Array.isArray(state.shares)||state.shares.length!==4){
 const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
 const fmtDate=s=>s?new Date(s).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}):'-';
 let saveTimer=null;
+
 function save(){
   localStorage.setItem(KEY,JSON.stringify(state));
   clearTimeout(saveTimer);
-  if(apiToken){
-    saveTimer=setTimeout(async()=>{
-      try{
-const r=await fetch(API_BASE+'/api/state',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiToken},body:JSON.stringify(state)});
-if(!r.ok) console.warn('Central database sync failed',r.status);
 
-console.log('HEKAND central database sync OK');
-function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
-async function login(){
- const u=document.getElementById('loginUser').value.trim().toLowerCase(), p=document.getElementById('loginPass').value;
- if(!u||!p){toast('Username dan password wajib diisi');return}
- await ensureUsers();
- try{
-   const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
-   if(r.ok){
-     const data=await r.json(); apiToken=data.token; sessionStorage.setItem('hekand_api_token',apiToken);
-     state=data.state||state; state.currentUser=u; save(); startApp(); return;
-   }
- }catch(e){}
- const account=state.users[u];
- if(account && account.passwordHash===await hashPassword(p)){ state.currentUser=u; save(); startApp(); }
- else toast('Username atau password salah');
+  if(!apiToken){
+    console.warn('HEKAND: API token unavailable; local cache only');
+    return;
+  }
+
+  saveTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(API_BASE+'/api/state',{
+        method:'PUT',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+apiToken
+        },
+        body:JSON.stringify(state)
+      });
+
+      const result=await r.json().catch(()=>({}));
+
+      if(!r.ok){
+        console.error('HEKAND SAVE FAILED:',r.status,result);
+        toast('Gagal sync database');
+        return;
+      }
+
+      console.log('HEKAND DATABASE SYNC OK');
+    }catch(e){
+      console.error('HEKAND DATABASE OFFLINE:',e);
+      toast('Database tidak dapat diakses');
+    }
+  },300);
 }
+
+function toast(t){
+  let x=document.getElementById('toast');
+  if(!x)return;
+  x.textContent=t;
+  x.style.display='block';
+  setTimeout(()=>x.style.display='none',2200);
+}
+
+async function login(){
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+
+  if(!u||!p){
+    toast('Username dan password wajib diisi');
+    return;
+  }
+
+  try{
+    const r=await fetch(API_BASE+'/api/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:u,password:p})
+    });
+
+    const data=await r.json().catch(()=>({}));
+
+    if(!r.ok){
+      console.error('LOGIN FAILED:',r.status,data);
+      toast(data.error||'Login gagal');
+      return;
+    }
+
+    apiToken=data.token;
+    sessionStorage.setItem('hekand_api_token',apiToken);
+
+    state=data.state||state;
+    state.currentUser=u;
+
+    localStorage.setItem(KEY,JSON.stringify(state));
+
+    startApp();
+    console.log('HEKAND LOGIN OK');
+  }catch(e){
+    console.error('LOGIN SERVER ERROR:',e);
+    toast('Server/database tidak dapat diakses');
+  }
+}
+
 function startApp(){
  document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';
  document.getElementById('userName').textContent=state.currentUser==='owner'?'Owner':'Admin';
