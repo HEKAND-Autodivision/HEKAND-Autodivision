@@ -580,19 +580,8 @@ function save(){
   if(apiToken){
     saveTimer=setTimeout(async()=>{
       try{
-const r = await fetch(API_BASE + '/api/state', {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + apiToken
-  },
-  body: JSON.stringify(state)
-});
-
-if (!r.ok) {
-  const errText = await r.text();
-  throw new Error('Central database sync failed: HTTP ' + r.status + ' - ' + errText);
-}
+const r=await fetch(API_BASE+'/api/state',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiToken},body:JSON.stringify(state)});
+if(!r.ok) console.warn('Central database sync failed',r.status);
 
 console.log('HEKAND central database sync OK');
 function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
